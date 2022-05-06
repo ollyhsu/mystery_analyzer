@@ -1,0 +1,97 @@
+{% extends 'layout/base.html' %}
+{% load static %}
+{% block title %}首页{% endblock %}
+
+{% block css %}
+
+{% endblock %}
+
+{% block contents %}
+    <!-- Page title -->
+    <div class="page-header">
+        <div class="container-xl">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <h2 class="page-title">页面展示</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Page body -->
+    <div class="page-body">
+        <div class="container-xl">
+            <div class="row row-cards">
+                <!--图片展示-->
+                <div class="col-sm-6 col-lg-6">
+                    <div class="row row-cards">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center"><i class="fas fa-fingerprint"
+                                                               style="zoom: 1.0;padding: 5px;"></i><a
+                                            href="{% url 'index' %}">指纹识别页面</a></h3>
+                                    <img class="border shadow" src="{% static 'img/index_show/finger.png' %}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center"><i class="fa fa-bug" style="zoom: 1.0;padding: 5px;"></i>漏洞检测页面
+                                    </h3>
+                                    <img class="border shadow" src="{% static 'img/index_show/vuln.png' %}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center">后台管理页面</h3>
+                                    <img class="border shadow" src="{% static 'img/index_show/admin.png' %}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-lg-6">
+                    <div class="row row-cards">
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center"><i class="fas fa-search"
+                                                               style="zoom: 1.0;padding: 5px;"></i><a
+                                            href="{% url 'index' %}">端口扫描页面</a></h3>
+                                    <img class="border shadow" src="{% static 'img/index_show/port.png' %}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center"><i class="fab fa-internet-explorer"
+                                                               style="zoom: 1.0;padding: 5px;"></i>安全导航页面</h3>
+                                    <img class="border shadow" src="{% static 'img/index_show/navigation.png' %}">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3 class="text-center"><i class="fas fa-stream"
+                                                               style="zoom: 1.0;padding: 5px;"></i>目录识别页面</h3>
+                                    <img class="border shadow" src="{% static 'img/index_show/dir.png' %}">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+{% endblock %}

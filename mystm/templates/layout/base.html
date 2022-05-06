@@ -1,0 +1,90 @@
+<!doctype html>
+{% load static %}
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+    <meta name="msapplication-TileColor" content="#206bc4"/>
+    <meta name="theme-color" content="#206bc4"/>
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+    <meta name="apple-mobile-web-app-capable" content="yes"/>
+    <meta name="mobile-web-app-capable" content="yes"/>
+    <meta name="HandheldFriendly" content="True"/>
+    <meta name="MobileOptimized" content="320"/>
+    <meta name="robots" content="noindex,nofollow,noarchive"/>
+    <link rel="icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon"/>
+    <link rel="shortcut icon" href="{% static 'img/favicon.ico' %}" type="image/x-icon"/>
+    <!-- Tabler Core -->
+
+{#    <link rel="stylesheet" href="https://unpkg.com/@tabler/core@1.0.0-beta6/dist/css/tabler.min.css">#}
+{#    <link rel="stylesheet" href="https://unpkg.com/@tabler/core@1.0.0-beta6/dist/css/tabler-flags.min.css">#}
+{#    <link rel="stylesheet" href="https://unpkg.com/@tabler/core@1.0.0-beta6/dist/css/tabler-payments.min.css">#}
+{#    <link rel="stylesheet" href="https://unpkg.com/@tabler/core@1.0.0-beta6/dist/css/tabler-vendors.min.css">#}
+    <link href="{% static '/plugins/tabler/css/tabler.min.css' %}" rel="stylesheet"/>
+    <link href="{% static '/plugins/tabler/css/tabler-flags.min.css' %}" rel="stylesheet"/>
+    <link href="{% static '/plugins/tabler/css/tabler-payments.min.css' %}" rel="stylesheet"/>
+    <link href="{% static '/plugins/tabler/css/tabler-vendors.min.css' %}" rel="stylesheet"/>
+    <link href="{% static '/plugins/tabler/css/demo.min.css' %}" rel="stylesheet"/>
+
+    <!-- Libs CSS -->
+{#    <link href="{% static '/plugins/tabler/css/demo.rtl.min.css' %}" rel="stylesheet"/>#}
+{#    <link href="{% static '/plugins/tabler/css/tabler.rtl.css' %}" rel="stylesheet"/>#}
+{#    <link href="{% static '/plugins/tabler/css/tabler-flags.rtl.min.css' %}" rel="stylesheet"/>#}
+{#    <link href="{% static '/plugins/tabler/css/tabler-payments.rtl.min.css' %}" rel="stylesheet"/>#}
+{#    <link href="{% static '/plugins/tabler/css/tabler-vendors.rtl.min.css' %}" rel="stylesheet"/>#}
+
+    <link rel="stylesheet" href="{% static '/css/fontawesome.css' %}">
+    <!-- 自定义的css -->
+    {% block css %}{% endblock %}
+    <!-- 粒子效果 -->
+    <style>
+        #particles-js {
+            position: fixed;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            z-index: -1;
+        }
+    </style>
+</head>
+<body class="antialiased " style="background-color: #f0f2f5;">
+<div class="page" style="background-image: url({% static 'img/bg.svg' %})">
+    <!--导航栏-->
+    {% include 'layout/header.html' %}
+    <!-- 主要内容 -->
+    <div class="content">
+        {% block contents %}{% endblock %}
+    </div>
+    <!-- 页脚 -->
+    {% include 'layout/footer.html' %}
+</div>
+<!-- particles.js container 粒子背景 -->
+<div id="particles-js"></div>
+<!-- 粒子背景 -->
+<!-- 粒子背景 -->
+<script type="text/javascript" src="{% static '/plugins/particlesjs/particles.js' %}"></script>
+<script type="text/javascript" src="{% static '/plugins/particlesjs/app.js' %}"></script>
+<!-- Tabler Core -->
+{#<script src="https://unpkg.com/@tabler/core@1.0.0-beta6/dist/js/tabler.min.js"></script>#}
+<script src="{% static '/plugins/tabler/js/tabler.min.js' %}"></script>
+{#<!-- Libs JS -->#}
+{#<script src="{% static '/plugins/tabler/js/demo.min.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/js/tabler.esm.min.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/apexcharts/dist/apexcharts.min.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/bootstrap/dist/js/bootstrap.bundle.min.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/countup.js/dist/countUp.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/jsvectormap/dist/js/jsvectormap.min.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/jsvectormap/dist/maps/world.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/litepicker/dist/litepicker.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/nouislider/dist/nouislider.min.js' %}"></script>#}
+{#<script src="{% static '/plugins/tabler/libs/tom-select/dist/js/tom-select.base.min.js' %}"></script>#}
+
+<!--自定义JS-->
+{% block js %}{% endblock %}
+</body>
+</html>

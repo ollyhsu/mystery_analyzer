@@ -32,33 +32,96 @@
 {% endblock %}
 {% block contents %}
     <div class="container-xl ">
-        <!-- 产品信息卡片 -->
-        <div class="card card-lg ">
-            <div class="card-body">
-                <!-- 卡片边缘缎带 -->
+    <!-- 产品信息卡片 -->
+    <div class="card card-lg ">
+        <div class="card-body">
+            <!-- 卡片边缘缎带 -->
             <div class="ribbon ribbon-top ribbon-start">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                         stroke-linejoin="round">
-                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                        <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
-                    </svg>
-                </div>
-                <!--标题&介绍-->
-                <div class="d-flex flex-row justify-content-center" {#style="margin-top: 180px;"#}>
-                    <div class="p-2"><i class="fa fa-bug" style="zoom: 2.2;"></i></div>
-                    <div class="p-2"><h1> 汇编反汇编器 </h1></div>
-                    <br>
-                </div>
-                <p class="text-center">汇编反汇编器
-                    <!-- 提示框 -->
-                    <span class="form-help" data-trigger="hover click" data-container="body" data-toggle="popover"
-                          data-placement="right" data-html="true"
-                          data-content="<p>None</p>
-                          <p class='mb-0'><a href='#'>详情</a></p>">?
-                    </span>
-                </p>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                     stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                    <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
+                </svg>
+            </div>
+            <!--标题&介绍-->
+            <div class="d-flex flex-row justify-content-center" {#style="margin-top: 180px;"#}>
+                <div class="p-2"><i class="fa fa-exchange-alt" style="zoom: 2.2;"></i></div>
+                <div class="p-2"><h1> 汇编反汇编器 </h1></div>
+                <br>
+            </div>
+            <i class="fas fa-exchange"></i>
+            <p class="text-center">处理 EVM Bytecode Runtime 字节码和 Opcode 操作码
+            </p>
+        </div>
+    </div>
+
+    <!-- 输入框卡片 -->
+    <div class="card card-lg ">
+        <div class="card-body">
+            {% csrf_token %}
+            <!-- 卡片边缘缎带 -->
+            <div class="ribbon ribbon-top ribbon-start">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
+                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                    <circle cx="10" cy="10" r="7"/>
+                    <line x1="21" y1="21" x2="15" y2="15"/>
+                </svg>
+            </div>
+            <!-- 输入框 -->
+            <div class="input-icon mb-3 float-left">
+                <textarea class="form-control" name="sol_bin" id="sol_bin" rows="20"
+                          placeholder="Binary Content.."></textarea>
+                <!-- 按钮 -->
+                <br>
+                <input type=button id="btnSubmit" class="bincode-btn btn btn-lg btn-indigo float-left" value="提交">
             </div>
         </div>
     </div>
+{% endblock %}
+{% block js %}
+    <!--Bootsrap Table-->
+    <script src="{% static 'plugins/bootstrap-table/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-table/bootstrap-table-zh-CN.js' %}"></script>
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <!-- 消息弹层组件 依赖jquery -->
+    <script src="{% static 'plugins/layer/layer.js' %}"></script>
+    <!--按钮事件-->
+    <script>
+        $(function () {
+            $(".bincode-btn").click(function () {
+                var sol_bin = $('#sol_bin').val();
+                if (sol_bin) {
+                    {#$("#text").val(sol_bin);#}
+                    // 此参数需要传递给后端,否则会csrf禁止,报403错误
+                    var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                    $.ajax({
+                        url: "/disassembler_ajax/",  // 请求的地址
+                        type: "post",  // 请求方式
+                        // 请求时传递过去的数据
+                        data: {"bincode": sol_bin, 'csrfmiddlewaretoken': csrf},
+                        dataType: "json",  // 返回的数据格式
+                        async: true,  // 异步的ajax
+                    }).success(function (data) {
+                        if (data.res === 1) {
+                            layer.msg('处理成功', {icon: 1});
+                            $("#sol_bin").val(data.opcode)
+                        } else if (data.res === 2) {
+                            layer.msg('处理成功', {icon: 1});
+                            $("#sol_bin").val(data.runtime)
+                        } else if (data.res === 0) {
+                            // 请求失败，显示错误信息
+                            layer.msg('处理失败', {icon: 2});
+                        }
+                    })
+
+                } else {
+                    layer.msg('输入为空', {icon: 2});
+                }
+            });
+        });
+    </script>
+
 {% endblock %}

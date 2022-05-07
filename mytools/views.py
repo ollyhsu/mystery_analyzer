@@ -113,6 +113,8 @@ def get_now_time():
 
 def get_sol_code_core_s(each_line):
     filename = each_line['add'] + "-" + each_line['name'] + ".sol"
+    if not os.path.isdir("%s/etherscan" % settings.MEDIA_ROOT):
+        os.makedirs("%s/etherscan" % settings.MEDIA_ROOT)
     save_path = "%s/etherscan/%s" % (MEDIA_ROOT, filename)
 
     if os.path.exists(save_path):

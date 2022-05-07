@@ -51,7 +51,7 @@ def ether_add_handle(request):
     if ether_add[:2] == '0x':
         tname = "%s-%s.sol" % (ether_add, int(stime))
         add_path = "%s/eth_add/%s" % (settings.MEDIA_ROOT, tname)
-        eth_add_parser(ether_add,add_path)
+        eth_add_parser(ether_add, add_path)
         # 【4】保存路径到数据库，此处只保存其相对上传目录的路径
         SolAddList.objects.create(add=ether_add, fpath='eth_add/%s' % tname, scantype="add", time=int(stime))
         return JsonResponse({"res": 1})

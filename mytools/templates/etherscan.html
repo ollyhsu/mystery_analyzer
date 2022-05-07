@@ -54,7 +54,6 @@
                 </div>
             </div>
         </div>
-
     </div>
     <!-- 扫描清单表格 -->
     <div class="container-xl">
@@ -201,77 +200,4 @@
             });
         });
     </script>
-    <!--按钮事件-->
-    {#    <script>#}
-    {#        function get_scan_info(ip , scan_type) {#}
-    {#                $.post('/vuln_scan', {#}
-    {#                    ip: ip ,#}
-    {#                    scan_type: scan_type#}
-    {#                }, function (data) {#}
-    {#                    if (data.code !== 200) {#}
-    {#                        layer.msg('添加失败',{icon: 1,offset: '100px',area: ['70px', '70px']});#}
-    {#                    } else {#}
-    {#                        layer.msg('添加成功',{icon: 1,offset: '100px',area: ['70px', '70px']});#}
-    {#                    }#}
-    {#                    $(".btn-scan").text('重新扫描');#}
-    {#                    $('.btn-scan').attr('disabled', false);#}
-    {#                });#}
-    {#            }#}
-    {#         function get_Middleware_scan(ip , CVE_id) {#}
-    {#                $.post('/Middleware_scan', {#}
-    {#                    ip: ip ,#}
-    {#                    CVE_id: CVE_id#}
-    {#                }, function (data) {#}
-    {#                    if (data.code !== 200) {#}
-    {#                        layer.msg('添加失败',{icon: 1,offset: '100px',area: ['70px', '70px']});#}
-    {#                    } else {#}
-    {#                        layer.msg('添加成功',{icon: 1,offset: '100px',area: ['70px', '70px']});#}
-    {##}
-    {#                    }#}
-    {#                    $(".btn-scan").text('重新扫描');#}
-    {#                    $('.btn-scan').attr('disabled', false);#}
-    {#                });#}
-    {#            }#}
-    {#        function start_Middleware_scan(ip, CVE_id){#}
-    {#            $.ajax({#}
-    {#                type: "POST",#}
-    {#                url: '/start_Middleware_scan',#}
-    {#                timeout: 10000,#}
-    {#                data: {#}
-    {#                    ip: ip,#}
-    {#                    CVE_id: CVE_id#}
-    {#                }#}
-    {#            });#}
-    {#        }#}
-    {#        $(function () {#}
-    {#            $(".scan-btn").click(function () {#}
-    {#                var domain = $('input[name=scan_url]').val();#}
-    {#= document.getElementsByName("scan_type")[0].value;#}
-    {#                for (var i = 0; i < document.getElementsByName("scan_type").length; i++) {#}
-    {#                    if (document.getElementsByName("scan_type")[i].checked) {#}
-    {#                        var scan_type = document.getElementsByName("scan_type")[i].value;#}
-    {#                    }#}
-    {#                }#}
-    {#                var CVE_id = $('#Middleware option:selected').val();#}
-    {#                console.log(CVE_id);#}
-    {#                console.log(domain);#}
-    {#console.log(scan_type);#}
-    {#                if(CVE_id && domain){#}
-    {#                    get_Middleware_scan(domain, CVE_id);#}
-    {##}
-    {#                }else{#}
-    {#                    if (domain) {#}
-    {#                        get_scan_info(domain, scan_type);#}
-    {#                    } else {#}
-    {#                        $('input[name=scan_url]').val('');#}
-    {#                        layer.msg('请输入正确的URL，\n例如：http://example.com');#}
-    {#                        $(".scan-btn").text('查询');#}
-    {#                        $(".scan-btn").attr('disabled', false);#}
-    {#                    }#}
-    {#                }#}
-    {#                start_Middleware_scan(domain, CVE_id);#}
-    {#            });#}
-    {#        });#}
-    {#    </script>#}
 {% endblock %}
-

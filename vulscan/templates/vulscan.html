@@ -32,50 +32,51 @@
 {% endblock %}
 
 {% block contents %}
+    {% csrf_token %}
     <div class="container-xl ">
-    <div class="card card-lg">
-        <div class="card-body">
-            <!-- 卡片边缘缎带 -->
-            <div class="ribbon ribbon-top ribbon-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
-                </svg>
-            </div>
-            <!--标题&介绍-->
-            <div class="d-flex flex-row justify-content-center">
-                <div class="p-2"><i class="fa fa-bug" style="zoom: 2.2;"></i></div>
-                <div class="p-2"><h1> 漏洞检测 </h1></div>
-                <br>
-            </div>
-            <p class="text-center">检测 Solidity 智能合约代码程序中的漏洞，如整型溢出、重入、拒绝服务等.
-                <!-- 提示框 -->
-                <span class="form-help" data-trigger="hover click" data-container="body" data-toggle="popover"
-                      data-placement="right" data-html="true"
-                      data-content="<p>None</p>
+        <div class="card card-lg">
+            <div class="card-body">
+                <!-- 卡片边缘缎带 -->
+                <div class="ribbon ribbon-top ribbon-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
+                    </svg>
+                </div>
+                <!--标题&介绍-->
+                <div class="d-flex flex-row justify-content-center">
+                    <div class="p-2"><i class="fa fa-bug" style="zoom: 2.2;"></i></div>
+                    <div class="p-2"><h1> 漏洞检测 </h1></div>
+                    <br>
+                </div>
+                <p class="text-center">检测 Solidity 智能合约代码程序中的漏洞，如整型溢出、重入、拒绝服务等.
+                    <!-- 提示框 -->
+                    <span class="form-help" data-trigger="hover click" data-container="body" data-toggle="popover"
+                          data-placement="right" data-html="true"
+                          data-content="<p>None</p>
                           <p class='mb-0'><a href='#'>详情</a></p>">?
                     </span>
-            </p>
-        </div>
-    </div>
-
-    <!-- 输入框卡片 -->
-    <div class="card card-lg ">
-        <div class="card-body">
-            <!-- 卡片边缘缎带 -->
-            <div class="ribbon ribbon-top ribbon-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
-                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <circle cx="10" cy="10" r="7"/>
-                    <line x1="21" y1="21" x2="15" y2="15"/>
-                </svg>
+                </p>
             </div>
-            <!-- 输入框 -->
-            <div class="input-icon mb-3 float-left" style="width: 80%">
+        </div>
+
+        <!-- 输入框卡片 -->
+        <div class="card card-lg ">
+            <div class="card-body">
+                <!-- 卡片边缘缎带 -->
+                <div class="ribbon ribbon-top ribbon-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <circle cx="10" cy="10" r="7"/>
+                        <line x1="21" y1="21" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <!-- 输入框 -->
+                <div class="input-icon mb-3 float-left" style="width: 80%">
                    <span class="input-icon-addon">
                         <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                              stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
@@ -83,97 +84,153 @@
                                 d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path
                                 d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg>
                     </span>
-                <input type="text" name="main_add" required="" placeholder="请填写主网合约地址" autocomplete="off"
-                       class="form-control  form-control-lg">
-            </div>
-            <!-- 按钮 -->
-            <button class="scan-btn btn btn-lg btn-indigo float-left">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <circle cx="10" cy="10" r="7"></circle>
-                    <line x1="21" y1="21" x2="15" y2="15"></line>
-                </svg>
-                漏洞检测
-            </button>
-            <br><br><br><br>
-            <!--检测类型-->
-            <div class="col-lg-12">
-                <div class="hr-text text-blue">处理方式</div>
-                <div class="form-selectgroup " style="width: 100%">
-                    <label class="col-sm-2 form-selectgroup-item">
-                        <input type="radio" name="scan_type" value="full_scan" class="form-selectgroup-input"
-                               checked="">
-                        <span class="form-selectgroup-label">全扫描</span>
-                    </label>
-                    <label class="col-sm-2 form-selectgroup-item">
-                        <input type="radio" name="scan_type" value="xss_vuln" class="form-selectgroup-input">
-                        <span class="form-selectgroup-label">Mythril 检测</span>
-                    </label>
-                    <label class="col-sm-2 form-selectgroup-item">
-                        <input type="radio" name="scan_type" value="sqli_vuln" class="form-selectgroup-input">
-                        <span class="form-selectgroup-label">Slither 检测</span>
-                    </label>
-                    <label class="col-sm-1 form-selectgroup-item">
-                        <input type="radio" name="scan_type" value="crawl_only" class="form-selectgroup-input">
-                        <span class="form-selectgroup-label">仅爬取</span>
-                    </label>
+                    <input type="text" name="main_add" required="" placeholder="请填写主网合约地址" autocomplete="off"
+                           class="form-control  form-control-lg">
+                </div>
+                <!-- 按钮 -->
+                <button class="scan-btn btn btn-lg btn-indigo float-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <circle cx="10" cy="10" r="7"></circle>
+                        <line x1="21" y1="21" x2="15" y2="15"></line>
+                    </svg>
+                    漏洞检测
+                </button>
+                <br><br><br><br>
+                <!--检测类型-->
+                <div class="col-lg-12">
+                    <div class="hr-text text-blue">处理方式</div>
+                    <div class="form-selectgroup " style="width: 100%">
+                        <label class="col-sm-2 form-selectgroup-item">
+                            <input type="radio" name="scan_type" value="full_scan" class="form-selectgroup-input"
+                                   checked="">
+                            <span class="form-selectgroup-label">全扫描</span>
+                        </label>
+                        <label class="col-sm-2 form-selectgroup-item">
+                            <input type="radio" name="scan_type" value="xss_vuln" class="form-selectgroup-input">
+                            <span class="form-selectgroup-label">Mythril 检测</span>
+                        </label>
+                        <label class="col-sm-2 form-selectgroup-item">
+                            <input type="radio" name="scan_type" value="sqli_vuln" class="form-selectgroup-input">
+                            <span class="form-selectgroup-label">Slither 检测</span>
+                        </label>
+                        <label class="col-sm-1 form-selectgroup-item">
+                            <input type="radio" name="scan_type" value="crawl_only" class="form-selectgroup-input">
+                            <span class="form-selectgroup-label">仅爬取</span>
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <!-- 上传框卡片 -->
-    <div class="card card-lg ">
-        <div class="card-body">
-            <!-- 卡片边缘缎带 -->
-            <div class="ribbon ribbon-top ribbon-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
-                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <circle cx="10" cy="10" r="7"/>
-                    <line x1="21" y1="21" x2="15" y2="15"/>
-                </svg>
-            </div>
-            <!-- 上传框 -->
-            <div class="form-label" style="font-size: x-large">Sol File Upload</div>
-            <div class="input-icon mb-3 float-left" style="width: 100%">
-                <input type="file" class="form-control form-control-lg">
-            </div>
-            <br><br><br>
-            <!--检测类型-->
-            <div class="col-lg-12">
-                <div class="hr-text text-blue">检测方式</div>
-                <div class="form-selectgroup " style="width: 100%">
-                    <label class="col-sm-2 form-selectgroup-item">
-                        <input type="radio" name="scan_type_f" value="full_scan" class="form-selectgroup-input"
-                               checked="">
-                        <span class="form-selectgroup-label">全扫描</span>
-                    </label>
-                    <label class="col-sm-2 form-selectgroup-item">
-                        <input type="radio" name="scan_type_f" value="xss_vuln" class="form-selectgroup-input">
-                        <span class="form-selectgroup-label">Mythril 检测</span>
-                    </label>
-                    <label class="col-sm-2 form-selectgroup-item">
-                        <input type="radio" name="scan_type_f" value="sqli_vuln" class="form-selectgroup-input">
-                        <span class="form-selectgroup-label">Slither 检测</span>
-                    </label>
+        <!-- 上传框卡片 -->
+        <div class="card card-lg ">
+            <div class="card-body">
+                <!-- 卡片边缘缎带 -->
+                <div class="ribbon ribbon-top ribbon-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <circle cx="10" cy="10" r="7"/>
+                        <line x1="21" y1="21" x2="15" y2="15"/>
+                    </svg>
                 </div>
+                <!-- 上传框 -->
+                <div class="form-label" style="font-size: x-large">Sol File Upload</div>
+                <form id="form_id" method="post" enctype="multipart/form-data">
+                    <div class="input-icon mb-3 float-left" style="width: 100%">
+                        <input type="file" class="upload_file form-control form-control-lg" name="upload_file"
+                               id="files">
+                    </div>
+                </form>
+                <br><br><br>
+                <!--检测类型-->
+                <div class="col-lg-12">
+                    <div class="hr-text text-blue">检测方式</div>
+                    <div class="form-selectgroup " style="width: 100%">
+                        <label class="col-sm-2 form-selectgroup-item">
+                            <input type="radio" name="scan_type_f" value="full_scan" class="form-selectgroup-input"
+                                   checked="">
+                            <span class="form-selectgroup-label">全扫描</span>
+                        </label>
+                        <label class="col-sm-2 form-selectgroup-item">
+                            <input type="radio" name="scan_type_f" value="xss_vuln" class="form-selectgroup-input">
+                            <span class="form-selectgroup-label">Mythril 检测</span>
+                        </label>
+                        <label class="col-sm-2 form-selectgroup-item">
+                            <input type="radio" name="scan_type_f" value="sqli_vuln" class="form-selectgroup-input">
+                            <span class="form-selectgroup-label">Slither 检测</span>
+                        </label>
+                    </div>
+                </div>
+                <br>
+                <!-- 按钮 -->
+                <button class="submit-btn btn btn-lg btn-indigo float-left" id="submit_f">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <circle cx="10" cy="10" r="7"></circle>
+                        <line x1="21" y1="21" x2="15" y2="15"></line>
+                    </svg>
+                    漏洞检测
+                </button>
             </div>
-            <br>
-            <!-- 按钮 -->
-            <button class="scan-btn-f btn btn-lg btn-indigo float-left">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <circle cx="10" cy="10" r="7"></circle>
-                    <line x1="21" y1="21" x2="15" y2="15"></line>
-                </svg>
-                漏洞检测
-            </button>
         </div>
-        {#        </div>#}
     </div>
+{% endblock %}
+
+{% block js %}
+    <!--Bootsrap Table-->
+    <script src="{% static 'plugins/bootstrap-table/bootstrap-table.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-table/bootstrap-table-zh-CN.js' %}"></script>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <!-- 消息弹层组件 依赖jquery -->
+    <script src="{% static 'plugins/layer/layer.js' %}"></script>
+    <!--按钮事件-->
+    <script>
+        function upload_solfile(formData) {
+            $.ajax({
+                url: "/sol_upload_handle/",  // 请求的地址
+                type: "post",  // 请求方式
+                data: formData,
+                // ajax发送文件必须要指定的两个参数
+                contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                async: true,  // 异步的ajax
+            }).success(function (data) {
+                if (data.res === 1) {
+                    layer.msg('上传成功，正在检测...', {icon: 1});
+                    {#$("#sol_bin").val(data.opcode)#}
+                } else if (data.res === 0) {
+                    // 请求失败，显示错误信息
+                    layer.msg('处理失败', {icon: 2});
+                }
+            })
+        }
+        $(function () {
+            $('INPUT[type="file"]').change(function () {
+                var ext = this.value.match(/\.(.+)$/)[1];
+                switch (ext) {
+                    case 'sol':
+                        break;
+                    default:
+                        layer.msg('不支持的文件后缀', {icon: 2});
+                        this.value = '';
+                }
+            });
+            $('#submit_f').click(function () {
+                var formData = new FormData();
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                formData.append('csrfmiddlewaretoken', csrf);
+                formData.append('upload_file', $('input[type=file]')[0].files[0]);
+                // console.log(formData)
+                // 上传文件
+                upload_solfile(formData)
+            })
+        });
+    </script>
 {% endblock %}

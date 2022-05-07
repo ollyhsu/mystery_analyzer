@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'vulscan.apps.VulscanConfig',
     'vulreport.apps.VulreportConfig',
     'mytools.apps.MytoolsConfig',
+    'mystery.apps.MysteryConfig',
 ]
 
 MIDDLEWARE = [

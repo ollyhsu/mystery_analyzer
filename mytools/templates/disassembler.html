@@ -97,10 +97,10 @@
         $(function () {
             $(".bincode-btn").click(function () {
                 var sol_bin = $('#sol_bin').val();
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
                 if (sol_bin) {
                     {#$("#text").val(sol_bin);#}
                     // 此参数需要传递给后端,否则会csrf禁止,报403错误
-                    var csrf = $('input[name="csrfmiddlewaretoken"]').val();
                     $.ajax({
                         url: "/disassembler_ajax/",  // 请求的地址
                         type: "post",  // 请求方式

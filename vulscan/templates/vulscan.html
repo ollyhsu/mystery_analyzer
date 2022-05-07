@@ -84,11 +84,12 @@
                                 d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5"></path><path
                                 d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5"></path></svg>
                     </span>
-                    <input type="text" name="main_add" required="" placeholder="请填写主网合约地址" autocomplete="off"
+                    <input type="text" name="ether_add" id="ether_add" required="" placeholder="请填写合约地址"
+                           autocomplete="off"
                            class="form-control  form-control-lg">
                 </div>
                 <!-- 按钮 -->
-                <button class="scan-btn btn btn-lg btn-indigo float-left">
+                <button class="submit_add btn btn-lg btn-indigo float-left" id="submit_add">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                          stroke-linejoin="round">
@@ -96,7 +97,7 @@
                         <circle cx="10" cy="10" r="7"></circle>
                         <line x1="21" y1="21" x2="15" y2="15"></line>
                     </svg>
-                    漏洞检测
+                    开始检测
                 </button>
                 <br><br><br><br>
                 <!--检测类型-->
@@ -124,7 +125,7 @@
                 </div>
             </div>
         </div>
-        <!-- 上传框卡片 -->
+        <!-- 文件上传框卡片 -->
         <div class="card card-lg ">
             <div class="card-body">
                 <!-- 卡片边缘缎带 -->
@@ -167,7 +168,7 @@
                 </div>
                 <br>
                 <!-- 按钮 -->
-                <button class="submit-btn btn btn-lg btn-indigo float-left" id="submit_f">
+                <button class="submit-btn btn btn-lg btn-indigo float-left" id="submit_file">
                     <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
                          stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
                          stroke-linejoin="round">
@@ -211,6 +212,7 @@
                 }
             })
         }
+
         $(function () {
             $('INPUT[type="file"]').change(function () {
                 var ext = this.value.match(/\.(.+)$/)[1];
@@ -222,14 +224,48 @@
                         this.value = '';
                 }
             });
-            $('#submit_f').click(function () {
+            $('#submit_file').click(function () {
                 var formData = new FormData();
                 var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                var udata = $('input[type=file]')[0].files[0];
                 formData.append('csrfmiddlewaretoken', csrf);
-                formData.append('upload_file', $('input[type=file]')[0].files[0]);
-                // console.log(formData)
-                // 上传文件
-                upload_solfile(formData)
+                formData.append('upload_file', udata);
+
+                if (udata) {
+                    upload_solfile(formData)
+                } else {
+                    layer.msg('上传文件为空', {icon: 2});
+                }
+
+            });
+            $('#submit_add').click(function () {
+                var formData = new FormData();
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                var ether_add = $('#ether_add').val();
+                formData.append('csrfmiddlewaretoken', csrf);
+                formData.append('ether_add', ether_add);
+                if (ether_add) {
+                    $.ajax({
+                        url: "/ether_add_ajax/",  // 请求的地址
+                        type: "post",  // 请求方式
+                        data: formData,
+                        // ajax发送文件必须要指定的两个参数
+                        contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                        processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                        async: true,  // 异步的ajax
+                    }).success(function (data) {
+                        if (data.res === 1) {
+                            layer.msg('提交成功，正在检测...', {icon: 1});
+                            {#$("#sol_bin").val(data.opcode)#}
+                        } else if (data.res === 0) {
+                            // 请求失败，显示错误信息
+                            layer.msg('提交失败', {icon: 2});
+                        }
+                    })
+                } else {
+                    layer.msg('输入为空', {icon: 2});
+                }
+
             })
         });
     </script>

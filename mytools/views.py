@@ -294,3 +294,85 @@ def sync_main_code_sql():
     # 根据智能合约的地址去爬取智能合约的代码
     get_sol_code_s()
     print("saved success")
+
+
+# 获取sol合约代码核心文件
+def get_sol_code_m(each_add, add_path):
+    each_add_url = "https://etherscan.io/address/%s#code" % each_add
+    # print(each_add_url)
+
+    if not os.path.isdir("%s/eth_add" % settings.MEDIA_ROOT):
+        os.makedirs("%s/eth_add" % settings.MEDIA_ROOT)
+
+    # file_name, extension_name = os.path.splitext(sol.name)
+    # tname = "%s-%s.sol" % (each_add, int(stime))
+    # add_path = "%s/eth_add/%s" % (settings.MEDIA_ROOT, tname)
+
+    # 伪装成浏览器
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) '
+                      'Chrome/78.0.3904.87 Safari/537.36'}
+    failed_times = 100
+    while True:  # 在制定次数内一直循环，直到访问站点成功
+
+        if failed_times <= 0:
+            get_now_time()
+            print("失败次数过多，请检查网络环境！")
+            break
+
+        failed_times -= 1
+        try:
+            # 以下except都是用来捕获当requests请求出现异常时，
+            # 通过捕获然后等待网络情况的变化，以此来保护程序的不间断运行
+            get_now_time()
+            print('URL: ' + each_add_url, end='\n')
+            response = requests.get(each_add_url, headers=headers, timeout=5)
+            break
+
+        except requests.exceptions.ConnectionError:
+            get_now_time()
+            print('ConnectionError！请等待3秒！')
+            time.sleep(3)
+
+        except requests.exceptions.ChunkedEncodingError:
+            get_now_time()
+            print('ChunkedEncodingError！请等待3秒！')
+            time.sleep(3)
+
+        except:
+            get_now_time()
+            print('Unfortunitely,出现未知错误！请等待3秒！')
+            time.sleep(3)
+
+    response.encoding = response.apparent_encoding
+
+    soup = BeautifulSoup(response.text, "html.parser")
+
+    targetPRE = soup.find_all('pre', 'js-sourcecopyarea editor')
+
+    with open(add_path, "w+", encoding="utf-8") as fo:
+        fo.write(targetPRE[0].text)
+        fo.flush()
+        os.fsync(fo.fileno())
+        fo.close()
+        get_now_time()
+        print('Saved！')
+
+    # with open(code_tmp + each_add + '.sol', "w+", encoding="utf-8") as fo:
+    #     fo.write(targetPRE[0].text)
+    #     fo.flush()
+    #     os.fsync(fo.fileno())
+    #     fo.close()
+    #     get_now_time()
+    #     print(each_add + ' Saved！')
+
+    return 0
+
+
+# 解析Etherscan地址
+def eth_add_parser(eth_add, addpath):
+    try:
+        get_sol_code_m(eth_add, addpath)
+        print("Parser Success.")
+    except FileNotFoundError as e:
+        print(e)

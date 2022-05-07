@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-cm7lpn#x8ck11s*z$%do832j)oys#s__o(^azo#yie^%6#^ul=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -41,7 +41,6 @@ INSTALLED_APPS = [
     'vulscan.apps.VulscanConfig',
     'vulreport.apps.VulreportConfig',
     'mytools.apps.MytoolsConfig',
-
 ]
 
 MIDDLEWARE = [

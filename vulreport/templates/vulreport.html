@@ -32,6 +32,7 @@
 
 {% endblock %}
 {% block contents %}
+        {% csrf_token %}
     <div class="container-xl ">
         <!-- 产品信息卡片 -->
         <div class="card card-lg ">
@@ -51,13 +52,7 @@
                     <div class="p-2"><h1> 检测报告 </h1></div>
                     <br>
                 </div>
-                <p class="text-center">报告
-                    <!-- 提示框 -->
-                    <span class="form-help" data-trigger="hover click" data-container="body" data-toggle="popover"
-                          data-placement="right" data-html="true"
-                          data-content="<p>None</p>
-                          <p class='mb-0'><a href='#'>详情</a></p>">?
-                    </span>
+                <p class="text-center">漏洞检测报告查询中心（仅支持查询当前账号提交的检测数据）
                 </p>
             </div>
         </div>
@@ -114,7 +109,7 @@
                         {% for i in data %}
                             {% if i.uid == user.id %}
                                 <tr>
-                                    <td>{{ i.id }}</td>
+                                    <td class="rid" id="rid">{{ i.id }}</td>
                                     {#                                <td>{{ i.fname }}</td>#}
                                     {% if i.scantype == 'add' %}
                                         <td>{{ i.add }}</td>
@@ -129,16 +124,31 @@
                                     {#                                <td>{{ i.add }}</td>#}
                                     {#                                <td>{{ i.scantype }}</td>#}
                                     <td>{{ i.time }}</td>
+
                                     {% if not i.result %}
                                         <td>
-                                            None
+                                            <a class="btn bg-azure-lt btn-block">
+                                                <span class="spinner-border spinner-border-sm me-2"
+                                                      role="status"></span>
+                                                Running
+                                            </a>
                                         </td>
                                     {% else %}
                                         <td>
-                                            Saved
+                                            <a class="vul_detail btn bg-green-lt btn-block" id="vul_detail"
+                                               onclick="vul_detail('{{ i.id }}')">
+                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                     class="icon icon-tabler icon-tabler-circle-check" width="60"
+                                                     height="60" viewBox="0 0 24 24" stroke-width="1.5" stroke="green"
+                                                     fill="none" stroke-linecap="round" stroke-linejoin="round">
+                                                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                                                    <circle cx="12" cy="12" r="9"/>
+                                                    <path d="M9 12l2 2l4 -4"/>
+                                                </svg>
+                                                Done
+                                            </a>
                                         </td>
                                     {% endif %}
-
                                 </tr>
                             {% endif %}
                         {% endfor %}
@@ -155,55 +165,24 @@
     <!--Bootsrap Table-->
     <script src="{% static 'plugins/bootstrap-table/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'plugins/bootstrap-table/bootstrap-table-zh-CN.js' %}"></script>
-
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <!-- 消息弹层组件 依赖jquery -->
     <script src="{% static 'plugins/layer/layer.js' %}"></script>
     <!--按钮事件-->
-    {#    <script>#}
-    {#        $(function () {#}
-    {#            $(".update-btn").click(function () {#}
-    {#                // 此参数需要传递给后端,否则会csrf禁止,报403错误#}
-    {#                var csrf = $('input[name="csrfmiddlewaretoken"]').val();#}
-    {#                $.ajax({#}
-    {#                    url: "/update_list_ajax/",  // 请求的地址#}
-    {#                    type: "post",  // 请求方式#}
-    {#                    // 请求时传递过去的数据#}
-    {#                    data: {'csrfmiddlewaretoken': csrf},#}
-    {#                    dataType: "json",  // 返回的数据格式#}
-    {#                    async: true,  // 异步的ajax#}
-    {#                }).success(function (data) {#}
-    {#                    if (data.res === 1) {#}
-    {#                        layer.msg('更新成功', {icon: 1});#}
-    {#$("#sol_bin").val(data.opcode)#}
-    {#                    } else if (data.res === 0) {#}
-    {#                        // 请求失败，显示错误信息#}
-    {#                        layer.msg('更新失败', {icon: 2});#}
-    {#                    }#}
-    {#                })#}
-    {#            });#}
-    {#            $(".save-btn").click(function () {#}
-    {#var sol_bin = $('#sol_bin').val();#}
-    {#$("#text").val(sol_bin);#}
-    {#                // 此参数需要传递给后端,否则会csrf禁止,报403错误#}
-    {#                var csrf = $('input[name="csrfmiddlewaretoken"]').val();#}
-    {#                $.ajax({#}
-    {#                    url: "/save_sol_ajax/",  // 请求的地址#}
-    {#                    type: "post",  // 请求方式#}
-    {#                    // 请求时传递过去的数据#}
-    {#                    data: {'csrfmiddlewaretoken': csrf},#}
-    {#                    dataType: "json",  // 返回的数据格式#}
-    {#                    async: true,  // 异步的ajax#}
-    {#                }).success(function (data) {#}
-    {#                    if (data.res === 1) {#}
-    {#                        layer.msg('保存成功', {icon: 1});#}
-    {#$("#sol_bin").val(data.opcode)#}
-    {#                    } else if (data.res === 0) {#}
-    {#                        // 请求失败，显示错误信息#}
-    {#                        layer.msg('保存失败', {icon: 2});#}
-    {#                    }#}
-    {#                })#}
-    {#            });#}
-    {#        });#}
-    {#    </script>#}
+    <script>
+        function vul_detail(i) {
+            console.log(i)
+            if (i) {
+                $.ajax({
+                    processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                    async: true,  // 异步的ajax
+                    success: function () {
+                        window.location.replace("{% url 'get_report' %}?rid="+i);   //可以带点参数
+                    },
+                })
+            } else {
+                layer.msg('ID为空', {icon: 2});
+            }
+        }
+    </script>
 {% endblock %}

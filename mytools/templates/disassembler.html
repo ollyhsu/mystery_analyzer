@@ -30,57 +30,61 @@
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-table/bootstrap-table.min.css' %}">
 
 {% endblock %}
-{% block contents %}
-    <div class="container-xl ">
-    <!-- 产品信息卡片 -->
-    <div class="card card-lg ">
-        <div class="card-body">
-            <!-- 卡片边缘缎带 -->
-            <div class="ribbon ribbon-top ribbon-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
-                     stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
-                     stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-                    <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
-                </svg>
-            </div>
-            <!--标题&介绍-->
-            <div class="d-flex flex-row justify-content-center" {#style="margin-top: 180px;"#}>
-                <div class="p-2"><i class="fa fa-exchange-alt" style="zoom: 2.2;"></i></div>
-                <div class="p-2"><h1> 汇编反汇编器 </h1></div>
-                <br>
-            </div>
-            <i class="fas fa-exchange"></i>
-            <p class="text-center">处理 EVM Bytecode Runtime 字节码和 Opcode 操作码
-            </p>
-        </div>
-    </div>
 
-    <!-- 输入框卡片 -->
-    <div class="card card-lg ">
-        <div class="card-body">
-            {% csrf_token %}
-            <!-- 卡片边缘缎带 -->
-            <div class="ribbon ribbon-top ribbon-start">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
-                     height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
-                     stroke-linecap="round" stroke-linejoin="round">
-                    <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
-                    <circle cx="10" cy="10" r="7"/>
-                    <line x1="21" y1="21" x2="15" y2="15"/>
-                </svg>
+{% block contents %}
+    {% csrf_token %}
+    <div class="container-xl ">
+        <!-- 产品信息卡片 -->
+        <div class="card card-lg ">
+            <div class="card-body">
+                <!-- 卡片边缘缎带 -->
+                <div class="ribbon ribbon-top ribbon-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24"
+                         stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+                        <path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z"></path>
+                    </svg>
+                </div>
+                <!--标题&介绍-->
+                <div class="d-flex flex-row justify-content-center" {#style="margin-top: 180px;"#}>
+                    <div class="p-2"><i class="fa fa-exchange-alt" style="zoom: 2.2;"></i></div>
+                    <div class="p-2"><h1> 汇编反汇编器 </h1></div>
+                    <br>
+                </div>
+                <i class="fas fa-exchange"></i>
+                <p class="text-center">处理 EVM Bytecode Runtime 字节码和 Opcode 操作码
+                </p>
             </div>
-            <!-- 输入框 -->
-            <div class="input-icon mb-3 float-left">
-                <textarea class="form-control" name="sol_bin" id="sol_bin" rows="20"
-                          placeholder="Binary Content.."></textarea>
-                <!-- 按钮 -->
-                <br>
-                <input type=button id="btnSubmit" class="bincode-btn btn btn-lg btn-indigo float-left" value="提交">
+        </div>
+
+        <!-- 输入框卡片 -->
+        <div class="card card-lg ">
+            <div class="card-body">
+
+                <!-- 卡片边缘缎带 -->
+                <div class="ribbon ribbon-top ribbon-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <circle cx="10" cy="10" r="7"/>
+                        <line x1="21" y1="21" x2="15" y2="15"/>
+                    </svg>
+                </div>
+                <!-- 输入框 -->
+                <div class="input-icon mb-3 float-left">
+                    <label for="sol_bin"></label><textarea class="form-control" name="sol_bin" id="sol_bin" rows="20"
+                                                           placeholder="Binary Content.."></textarea>
+                    <!-- 按钮 -->
+                    <br>
+                    <input type=button id="bincode-btn" class="bincode-btn btn btn-lg btn-indigo float-left" value="提交">
+                </div>
             </div>
         </div>
     </div>
 {% endblock %}
+
 {% block js %}
     <!--Bootsrap Table-->
     <script src="{% static 'plugins/bootstrap-table/bootstrap-table.min.js' %}"></script>

@@ -110,34 +110,37 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for i in data %}
-                            <tr>
-                                <td>{{ i.id }}</td>
-                                {#                                <td>{{ i.fname }}</td>#}
-                                {% if i.scantype == 'add' %}
-                                    <td>{{ i.add }}</td>
-                                {% elif i.scantype == 'file' %}
-                                    <td>{{ i.fname }}</td>
-                                {% else %}
-                                    <td>
-                                        None
-                                    </td>
-                                {% endif %}
-                                {#                                <td>{{ i.fpath }}</td>#}
-                                {#                                <td>{{ i.add }}</td>#}
-                                {#                                <td>{{ i.scantype }}</td>#}
-                                <td>{{ i.time }}</td>
-                                {% if not i.result %}
-                                    <td>
-                                        None
-                                    </td>
-                                {% else %}
-                                    <td>
-                                        Saved
-                                    </td>
-                                {% endif %}
 
-                            </tr>
+                        {% for i in data %}
+                            {% if i.uid == user.id %}
+                                <tr>
+                                    <td>{{ i.id }}</td>
+                                    {#                                <td>{{ i.fname }}</td>#}
+                                    {% if i.scantype == 'add' %}
+                                        <td>{{ i.add }}</td>
+                                    {% elif i.scantype == 'file' %}
+                                        <td>{{ i.fname }}</td>
+                                    {% else %}
+                                        <td>
+                                            None
+                                        </td>
+                                    {% endif %}
+                                    {#                                <td>{{ i.fpath }}</td>#}
+                                    {#                                <td>{{ i.add }}</td>#}
+                                    {#                                <td>{{ i.scantype }}</td>#}
+                                    <td>{{ i.time }}</td>
+                                    {% if not i.result %}
+                                        <td>
+                                            None
+                                        </td>
+                                    {% else %}
+                                        <td>
+                                            Saved
+                                        </td>
+                                    {% endif %}
+
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>

@@ -10,3 +10,4 @@ class SolAddList(models.Model):
     scantype = models.CharField(max_length=100, null=True)
     result = models.CharField(max_length=1000, null=True)
     time = models.CharField(max_length=100, null=True, unique=True)
+    uid = models.IntegerField(null=True)

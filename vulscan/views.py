@@ -18,6 +18,7 @@ def vulscan(request):
     return render(request, "vulscan.html")
 
 
+@login_required
 def sol_upload_handle(request):
     stime = time.time()
     # print(int(stime))
@@ -39,12 +40,14 @@ def sol_upload_handle(request):
             f.write(content)
 
     # 【4】保存路径到数据库，此处只保存其相对上传目录的路径
-    SolAddList.objects.create(fname=sol.name, fpath='file_upload/%s' % tname, scantype="file", time=int(stime))
+    SolAddList.objects.create(fname=sol.name, fpath='file_upload/%s' % tname, scantype="file", time=int(stime),
+                              uid=request.user.id)
 
     # 【5】别忘记返回信息
     return JsonResponse({"res": 1})
 
 
+@login_required
 def ether_add_handle(request):
     stime = time.time()
     ether_add = request.POST.get("ether_add")
@@ -53,19 +56,8 @@ def ether_add_handle(request):
         add_path = "%s/eth_add/%s" % (settings.MEDIA_ROOT, tname)
         eth_add_parser(ether_add, add_path)
         # 【4】保存路径到数据库，此处只保存其相对上传目录的路径
-        SolAddList.objects.create(add=ether_add, fpath='eth_add/%s' % tname, scantype="add", time=int(stime))
+        SolAddList.objects.create(add=ether_add, fpath='eth_add/%s' % tname, scantype="add", time=int(stime),
+                                  uid=request.user.id)
         return JsonResponse({"res": 1})
     else:
         return JsonResponse({"res": 0})
-    # print(bincode)
-
-    # if bincode[:10] == '0x60806040' or bincode[:8] == '60806040':
-    #     opcode_from_bytecode = disassemble_hex(bincode)
-    #     return JsonResponse({"res": 1, "opcode": opcode_from_bytecode})
-    # elif bincode[:4] == 'PUSH':
-    #     opcode_inline = "\n".join(bincode.splitlines())
-    #     bytecode_from_opcode = assemble_hex(opcode_inline)
-    #     return JsonResponse({"res": 2, "runtime": bytecode_from_opcode})
-    # else:
-    #     # 用户名和密码错误
-    # return JsonResponse({"res": 0})

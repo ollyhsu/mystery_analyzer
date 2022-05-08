@@ -15,7 +15,7 @@ def get_json_data_from_string(data):
 
 
 # 处理slither报告
-def _get_slither_report(dict_data):
+def get_slither_report(dict_data):
     slither_data = dict_data['Slither']
 
     # 判断slither_data的success属性是否为True
@@ -46,7 +46,7 @@ def _get_slither_report(dict_data):
 
 
 # 处理mythril报告
-def _get_mythril_report(dict_data):
+def get_mythril_report(dict_data):
     myth_data = dict_data['Mythril']
     # print(json.dumps(myth_data))
     # 判断myth_data的success属性是否为True
@@ -73,13 +73,12 @@ def _get_mythril_report(dict_data):
 def save_report_txt(sol_path, json_file):
     try:
         dict_datas = get_json_data(json_file)
-        s_data = _get_slither_report(dict_datas)
-        m_data = _get_mythril_report(dict_datas)
+        s_data = get_slither_report(dict_datas)
+        m_data = get_mythril_report(dict_datas)
         txt_data = s_data + m_data
         # print(txt_data)
         gen_report_file(sol_path, txt_data)
     except TypeError:
         print("Data Type Error.")
-
 
 # save_report_txt('/home/hohin/mystery/examples/calls_report.json')

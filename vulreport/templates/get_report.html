@@ -32,7 +32,7 @@
 
 {% endblock %}
 {% block contents %}
-        {% csrf_token %}
+    {% csrf_token %}
     <div class="container-xl ">
         <!-- 产品信息卡片 -->
         <div class="card card-lg ">
@@ -74,12 +74,34 @@
                     </svg>
                 </div>
                 <!--结果表格-->
-                <p>{{ data.fname }}</p>
-                <p>{{ data.scantype }}</p>
-                <p>{{ data.result }}</p>
+                {% if data.scantype == 'add' %}
+                    <h3 class="card-title">Address</h3>
+                    <div class="input-icon">
+                        <input type="text" value="{{ data.add }}" class="form-control"
+                               placeholder="Search…" readonly="">
+                    </div>
+                {% elif data.scantype == 'file' %}
+                    <h3 class="card-title">File Name</h3>
+                    <div class="input-icon">
+                        <input type="text" value="{{ data.fname }}" class="form-control"
+                               placeholder="Search…" readonly="">
+                    </div>
+                {% else %}
+                    <h3 class="card-title">None</h3>
+                {% endif %}
+                <br>
+                <h3 class="card-title">Time</h3>
+                <div class="input-icon">
+                    <input type="text" value="{{ data.time }}" class="form-control"
+                           placeholder="Search…" readonly="">
+                </div>
+                <br>
+                <h3 class="card-title">Result</h3>
+                <p>{{ data.result |linebreaksbr }}</p>
             </div>
         </div>
     </div>
 
 
 {% endblock %}
+

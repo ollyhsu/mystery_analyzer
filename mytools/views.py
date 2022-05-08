@@ -56,8 +56,6 @@ def etherscansync(request):
         s_list.append(ether_data)
         count += 1
     data = s_list
-
-    # sync_main_code_sql()
     return render(request, "etherscan.html", {"data": data})
 
 

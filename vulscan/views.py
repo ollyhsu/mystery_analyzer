@@ -5,11 +5,11 @@ import subprocess
 import time
 
 import solcx
-from django.contrib.auth.decorators import login_required
-
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import render
 from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
+from django.shortcuts import render
+
 from mystery.solidity import get_sol_version, install_solc_version_select
 from mytools.views import eth_add_parser
 from vulreport.views import get_report_json
@@ -60,12 +60,16 @@ def start_vul_scan(request):
     try:
         sql_path = obj.fpath
         abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
+        # 获取Runtime
         obj.runtime = get_bin_file(abs_path)
+        # 返回CFG PNG List
+        obj.cfg = get_cfg_png_list(abs_path)
+        # 运行检测
         result, check_time = run_file_check(sql_path)
+        # 结果保存详细列表
         get_report_json(result, obj.id)
-        obj.result = result
+        obj.result, obj.check_time = result, check_time
         obj.status = "completed"
-        obj.check_time = check_time
         obj.save()
         print("Save Done...")
         return JsonResponse({"res": 1})
@@ -152,6 +156,7 @@ def get_run_command(cmd, timeout):
         p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                              stdin=subprocess.PIPE)
         stdout, stderr = p.communicate(timeout=timeout)
+        # print(stdout)
         out = stdout.decode('utf-8')
         return out
     except subprocess.TimeoutExpired as e:
@@ -188,3 +193,39 @@ def get_bin_file(abs_path):
             print(e)
     except Exception as e:
         print(e)
+
+
+def get_cfg_png_list(abs_path):
+    timeout = 60
+    cmd_prefix = f"slither {abs_path}"
+    res = subprocess.Popen(f"{cmd_prefix} --print cfg", shell=True, stdout=subprocess.PIPE,
+                           stderr=subprocess.STDOUT)  # 使用管道
+    info_out = res.stdout.readlines()
+    # print("CFG Export")
+    str_list = [x.decode('utf-8') for x in info_out]
+    # 遍历str_list，提取dot文件名
+    cfg_png_list = []
+    for str_dot in str_list:
+        if str_dot.find("dot") != -1:
+            png_path = cfg_dot_to_png(str_dot.split(" ")[-1].strip())
+            cfg_png_list.append(png_path)
+            # 删除dot文件
+            if os.path.exists(str_dot.split(" ")[-1].strip()):
+                os.remove(str_dot.split(" ")[-1].strip())
+    cfg_png_json = json.dumps(cfg_png_list)
+    print("CFG Export Done")
+    # print(type(cfg_png_json))
+    return cfg_png_json
+
+
+def cfg_dot_to_png(dot_path):
+    # 将dot文件转换为png文件
+    FileName, ExtensionName = os.path.splitext(dot_path)
+    fname = FileName.split('/')[-1]
+    dirname = os.path.abspath(os.path.join(FileName, ".."))
+    png_fname = f"{fname}.png"
+    png_fpath = os.path.join(dirname, png_fname)
+    subprocess.check_call(['dot', '-Tpng', f"{dot_path}", '-o', f"{png_fpath}"])
+    # 分割png_fpath 保留相对路径
+    png_fpath = png_fpath.split('media/')[-1]
+    return png_fpath

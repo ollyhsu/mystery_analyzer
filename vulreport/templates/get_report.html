@@ -26,34 +26,30 @@
         .page-item.page-next, .page-item.page-prev {
             flex: 0 0 auto;
         }
-    </style>
 
+        .carousel-indicators [data-bs-target] {
+            background-color: #bacad9;
+        }
+
+        .carousel-caption {
+            color: #efefef;
+        }
+
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            background-color: #bacad9;
+        }
+    </style>
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-table/bootstrap-table.min.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
-    <style type="text/css">
-        textarea {
+    <style>
+        .form-control:disabled, .form-control[readonly] {
             background-color: #efefef;
-            border: none;
-            padding: 5px;
-            color: #666;
-        }
-
-        .textAreaWithLines {
-            font-family: courier;
-            border: 1px solid #ddd;
-        }
-
-        .textAreaWithLines textarea, .textAreaWithLines div {
-            border: 0px;
-            line-height: 120%;
-            font-size: 12px;
-        }
-
-        .lineObj {
-            color: #666;
+            opacity: 1;
         }
     </style>
 {% endblock %}
+
 {% block contents %}
     {% csrf_token %}
     <div class="container-xl">
@@ -96,6 +92,7 @@
                         <line x1="4" y1="9" x2="7.5" y2="12.5"/>
                     </svg>
                 </div>
+                <!--结果表格-->
                 <div class="row row-cards">
                     <div class="row g-3">
                         <div class="col-6">
@@ -140,8 +137,13 @@
                         </div>
                     </div>
                 </div>
+                <br>
+                <div class="control-btn">
+                    <a id="delete-btn" class="update-btn btn btn-pill" onclick="delete_report('{{ data.id }}')">
+                        Delete
+                    </a>
+                </div>
                 <hr class="hr-text">
-                <!--结果表格-->
                 <h3 class="card-title">Result</h3>
                 {#                <p>{{ data.result |linebreaksbr }}</p>#}
                 {% if data.status == "completed" %}
@@ -191,37 +193,122 @@
                 {% elif data.status == "failed" %}
                     <h5 class="alert-heading">There are some errors,Please Check logs.</h5>
                 {% endif %}
-
-                <hr>
-                <h3 class="card-title">Sol Code</h3>
-                <label for="text">
-                    <textarea id="sol_code" name="sol_code" cols="120" rows="20" readonly>{{ data.sol_code }}</textarea>
-                </label>
-                {% if data.runtime != '' %}
-                    <hr>
-                    <h3 class="card-title">Runtime ByteCode</h3>
-                    <label for="text">
-                        <textarea id="runtime" name="runtime" cols="120" rows="8" readonly
-                                  style="width:97%">{{ data.runtime }}</textarea>
-                    </label>
-                    <hr>
-                    <h3 class="card-title">Opcode</h3>
-                    <label for="text">
-                        <textarea id="opcodes" name="opcodes" cols="120" rows="20"
-                                  readonly>{{ data.opcodes }}</textarea>
-                    </label>
-                {% endif %}
-                <hr>
-                <h3 class="card-title">CFG</h3>
-                <hr>
-                <div>
-                    <a id="delete-btn" class="update-btn btn btn-pill" onclick="delete_report('{{ data.id }}')">
-                        Delete
-                    </a>
-                </div>
             </div>
         </div>
     </div>
+
+    <div class="container-xl">
+        <div class="card card-lg">
+            <div class="card-body">
+                <!-- 卡片边缘缎带 -->
+                <div class="ribbon ribbon-top ribbon-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-comet" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M15.5 18.5l-3 1.5l.5 -3.5l-2 -2l3 -.5l1.5 -3l1.5 3l3 .5l-2 2l.5 3.5z"/>
+                        <line x1="4" y1="4" x2="11" y2="11"/>
+                        <line x1="9" y1="4" x2="12.5" y2="7.5"/>
+                        <line x1="4" y1="9" x2="7.5" y2="12.5"/>
+                    </svg>
+                </div>
+                <!--结果表格-->
+                <h3 class="card-title">Sol Code</h3>
+                <div class="col-lg-12">
+                    <div>
+                        <label class="form-label"></label>
+                        <textarea id="sol_code" class="form-control" rows="20" readonly>{{ data.sol_code }}</textarea>
+                    </div>
+                </div>
+                {% if data.runtime != '' %}
+                    <hr>
+                    <h3 class="card-title">Runtime ByteCode</h3>
+                    <div class="col-lg-12">
+                        <div>
+                            <label class="form-label"></label>
+                            <textarea id="runtime" class="form-control" rows="8" readonly
+                                      style="width: 96%">{{ data.runtime }}</textarea>
+                        </div>
+                    </div>
+                    <hr>
+                    <h3 class="card-title">Opcodes</h3>
+                    <div class="col-lg-12">
+                        <div>
+                            <label class="form-label"></label>
+                            <textarea id="opcodes" class="form-control" rows="20" readonly>{{ data.opcodes }}</textarea>
+                        </div>
+                    </div>
+
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="container-xl">
+        <div class="card card-lg">
+            <div class="card-body">
+                <!-- 卡片边缘缎带 -->
+                <div class="ribbon ribbon-top ribbon-start">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-comet" width="24"
+                         height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"
+                         stroke-linecap="round" stroke-linejoin="round">
+                        <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+                        <path d="M15.5 18.5l-3 1.5l.5 -3.5l-2 -2l3 -.5l1.5 -3l1.5 3l3 .5l-2 2l.5 3.5z"/>
+                        <line x1="4" y1="4" x2="11" y2="11"/>
+                        <line x1="9" y1="4" x2="12.5" y2="7.5"/>
+                        <line x1="4" y1="9" x2="7.5" y2="12.5"/>
+                    </svg>
+                </div>
+                <!--结果表格-->
+                {% if data.cfg != '' %}
+                    <h3 class="card-title">Control Flow Graph</h3>
+                    <div id="carousel-sample" class="carousel slide" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            {% for i in data.cfg %}
+                                {% if forloop.counter0 == 0 %}
+                                    <button type="button" data-bs-target="#carousel-sample"
+                                            data-bs-slide-to="{{ forloop.counter0 }}"
+                                            class="active"></button>
+                                {% else %}
+                                    <button type="button" data-bs-target="#carousel-sample"
+                                            data-bs-slide-to="{{ forloop.counter0 }}"
+                                            class=""></button>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <div class="carousel-inner">
+                            {% for i in data.cfg %}
+                                {% if forloop.counter0 == 0 %}
+                                    <div class="carousel-item active">
+                                        <img class="d-block w-100" alt=""
+                                             src="{% url 'home' %}media/{{ i }}">
+                                    </div>
+                                {% else %}
+                                    <div class="carousel-item">
+                                        <img class="d-block w-100" alt=""
+                                             src="{% url 'home' %}media/{{ i }}">
+                                    </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                        <a class="carousel-control-prev" href="#carousel-sample" role="button" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Previous</span>
+                        </a>
+                        <a class="carousel-control-next" href="#carousel-sample" role="button" data-bs-slide="next">
+                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                            <span class="visually-hidden">Next</span>
+                        </a>
+                    </div>
+                {% endif %}
+
+            </div>
+        </div>
+    </div>
+
+
+
+
 {% endblock %}
 {% block js %}
     <!--Bootsrap Table-->
@@ -264,14 +351,12 @@
 
         $(function () {
             $("#sol_code").setTextareaCount({
-                    width: "30px",
                     bgColor: "#e6e6e6",
                     color: "#000",
                     display: "block"
                 }
             );
             $("#opcodes").setTextareaCount({
-                    width: "30px",
                     bgColor: "#e6e6e6",
                     color: "#000",
                     display: "block"

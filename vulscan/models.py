@@ -13,4 +13,5 @@ class SolAddList(models.Model):
     status = models.CharField(max_length=100, null=True)
     result = models.TextField(blank=True, null=True)
     runtime = models.TextField(blank=True, null=True)
+    cfg = models.CharField(max_length=100, null=True)
     check_time = models.CharField(max_length=100, null=True, unique=True)

@@ -37,6 +37,7 @@ def vulreport(request):
 
 @login_required
 def get_report(request):
+    global opcodes
     rid_get = request.GET.get('rid')
     uid = request.user.id
     try:
@@ -51,8 +52,8 @@ def get_report(request):
         else:
             opcodes = ''
         sol_code = get_sol_code_file(obj.fpath)
+
         if obj.uid == uid:
-            # dbj = VulDeatilList.objects.get(id=obj.id)
             report_data = {
                 'id': obj.id,
                 'fname': obj.fname,
@@ -67,6 +68,7 @@ def get_report(request):
                 'runtime': obj.runtime,
                 'opcodes': opcodes,
                 'sol_code': sol_code,
+                'cfg': json.loads(obj.cfg),
             }
             dreport_datas = VulDeatilList.objects.filter(rid=rid_get)
             for deatillistware in dreport_datas:
@@ -96,6 +98,13 @@ def del_report(request):
         for deatillistware in dreport_datas:
             deatillistware.delete()
         obj = SolAddList.objects.get(id=rid_get)
+        # 循环获取obj.cfg文件路径
+        cfg_path = obj.cfg
+        for i in json.loads(obj.cfg):
+            cfg_path = os.path.join(settings.MEDIA_ROOT, i)
+            # delete file
+            if os.path.exists(cfg_path):
+                os.remove(cfg_path)
         file_path = os.path.join(settings.MEDIA_ROOT, obj.fpath)
         # print(file_path)
         if os.path.exists(file_path):

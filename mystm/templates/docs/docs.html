@@ -7,9 +7,35 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
+    <link href="{% static 'css/fontawesome.css' %}" rel="stylesheet"/>
     <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/docsify@4/lib/themes/vue.css">
 </head>
 <body>
+<nav>
+    <ul class="navbar-nav">
+        <li class="nav-item">
+            <a class="nav-link" href="{% url 'index' %}">
+                <span class="d-md-none d-lg-inline-block"><i class="fas fa-home"
+                                                             style="zoom: 1.0;padding: 5px;"></i></span>
+                <span class="nav-link-title">首页</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " href="{% url 'vulscan' %}">
+                <span class="d-md-none d-lg-inline-block"><i class="fa fa-bug"
+                                                             style="zoom: 1.0;padding: 5px;"></i></span>
+                <span class="nav-link-title">漏洞扫描</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link " href="{% url 'vulreport' %}">
+                <span class="d-md-none d-lg-inline-block"><i class="fas fa-globe-asia"
+                                                             style="zoom: 1.0;padding: 5px;"></i></span>
+                <span class="nav-link-title">检测报告</span>
+            </a>
+        </li>
+    </ul>
+</nav>
 
 <!-- particles.js container 粒子背景 -->
 <div id="particles-js"></div>
@@ -22,7 +48,7 @@
         repo: 'ollyhsu/mystery_analyzer',
         el: '#app',
         maxLevel: 2,
-        loadNavbar: 'nav.md',
+        {#loadNavbar: 'nav.md',#}
         loadSidebar: "sidebar.md",
         subMaxLevel: 2,
         auto2top: true,

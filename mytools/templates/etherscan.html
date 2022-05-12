@@ -73,17 +73,22 @@
                 {#                <span class="card-title text-center">#}
                 {#                    EtherScan列表#}
                 {#                </span>#}
-                <div>
-                    <a href="#" id="update-btn" class="update-btn btn btn-pill">
-                        Update list
-                    </a>
-                    <a href="#" id="save-btn" class="save-btn btn btn-pill">
-                        Save sol
-                    </a>
-                    <a href="#" id="vul-btn" class="vul-btn btn btn-pill">
-                        Vul Detection
-                    </a>
-                </div>
+                {% if user.is_superuser == 1 %}
+
+                    <div>
+                        <a href="#" id="update-btn" class="update-btn btn btn-pill">
+                            Update list
+                        </a>
+                        <a href="#" id="save-btn" class="save-btn btn btn-pill">
+                            Save sol
+                        </a>
+                        <a href="#" id="vul-btn" class="vul-btn btn btn-pill">
+                            Vul Detection
+                        </a>
+                    </div>
+
+                {% endif %}
+
                 <!--结果表格-->
                 <div class="table-responsive" id="refresh">
                     <table class="table text-center" id="table"
@@ -118,7 +123,10 @@
                         {% for i in data %}
                             <tr>
                                 <td>{{ i.id }}</td>
-                                <td>{{ i.add }}</td>
+                                <td>
+                                    <a href="https://etherscan.io/address/{{ i.add }}#code"
+                                       target="_blank">{{ i.add }}</a>
+                                </td>
                                 <td>{{ i.name }}</td>
                                 <td>{{ i.compiler }}</td>
                                 <td>{{ i.version }}</td>
@@ -168,6 +176,10 @@
                 }).success(function (data) {
                     if (data.res === 1) {
                         layer.msg('更新成功', {icon: 1});
+                        setTimeout(function () {
+                            location.reload()
+                        }, 5000)
+
                         {#$("#sol_bin").val(data.opcode)#}
                     } else if (data.res === 0) {
                         // 请求失败，显示错误信息

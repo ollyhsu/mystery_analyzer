@@ -32,7 +32,7 @@
 
 {% endblock %}
 {% block contents %}
-        {% csrf_token %}
+    {% csrf_token %}
     <div class="container-xl ">
         <!-- 产品信息卡片 -->
         <div class="card card-lg ">
@@ -177,12 +177,18 @@
                     processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
                     async: true,  // 异步的ajax
                     success: function () {
-                        window.location.replace("{% url 'get_report' %}?rid="+i);   //可以带点参数
+                        window.location.replace("{% url 'get_report' %}?rid=" + i);   //可以带点参数
                     },
                 })
             } else {
                 layer.msg('ID为空', {icon: 2});
             }
-        }
+        };
+        $(function () {
+            /*30s*/
+            setInterval(function () {
+                window.location.reload()
+            }, 30000);
+        });
     </script>
 {% endblock %}

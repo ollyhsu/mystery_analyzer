@@ -6,6 +6,5 @@ urlpatterns = [
     # vulreport 页面
     path('vulreport/', views.vulreport, name='vulreport'),
     path('get_report/', views.get_report, name='get_report'),
-    # path('vuldetail/', views.vuldetail, name='vuldetail'),
-
+    path('del_report/', views.del_report, name='del_report'),
 ]

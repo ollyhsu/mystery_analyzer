@@ -201,17 +201,53 @@
                 contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
                 processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
                 async: true,  // 异步的ajax
-            }).success(function (data) {
-                if (data.res === 1) {
-                    layer.msg('上传成功，正在检测...', {icon: 1});
-                    {#$("#sol_bin").val(data.opcode)#}
-                } else if (data.res === 0) {
-                    // 请求失败，显示错误信息
-                    layer.msg('处理失败', {icon: 2});
+                success: function (data) {
+                    setTimeout(function () {
+                        {#console.log(data.id)#}
+                        formData.append('vulid', data.id);
+                        window.location.href = "/vulreport/";
+                        start_vul_scan(formData)
+                    }, 5000)
                 }
             })
         }
 
+        function eth_add_check(formData) {
+            $.ajax({
+                url: "/ether_add_ajax/",  // 请求的地址
+                type: "post",  // 请求方式
+                data: formData,
+                // ajax发送文件必须要指定的两个参数
+                contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                async: true,  // 异步的ajax
+            }).success(function (data) {
+                if (data.res === 1) {
+                    setTimeout(function () {
+                        console.log(data.id)
+                        formData.append('vulid', data.id);
+                        window.location.href = "/vulreport/";
+                        start_vul_scan(formData)
+                    }, 5000)
+                    {#$("#sol_bin").val(data.opcode)#}
+                } else if (data.res === 0) {
+                    // 请求失败，显示错误信息
+                    layer.msg('提交失败', {icon: 2});
+                }
+            })
+        }
+
+        function start_vul_scan(formData) {
+            $.ajax({
+                url: "/start_vul_scan/",  // 请求的地址
+                type: "post",  // 请求方式
+                data: formData,
+                // ajax发送文件必须要指定的两个参数
+                contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                async: true,  // 异步的ajax
+            });
+        }
         $(function () {
             $('INPUT[type="file"]').change(function () {
                 var ext = this.value.match(/\.(.+)$/)[1];
@@ -229,13 +265,12 @@
                 var udata = $('input[type=file]')[0].files[0];
                 formData.append('csrfmiddlewaretoken', csrf);
                 formData.append('upload_file', udata);
-
                 if (udata) {
+                    layer.msg('上传成功，正在检测...', {icon: 1});
                     upload_solfile(formData)
                 } else {
                     layer.msg('上传文件为空', {icon: 2});
                 }
-
             });
             $('#submit_add').click(function () {
                 var formData = new FormData();
@@ -244,28 +279,18 @@
                 formData.append('csrfmiddlewaretoken', csrf);
                 formData.append('ether_add', ether_add);
                 if (ether_add) {
-                    $.ajax({
-                        url: "/ether_add_ajax/",  // 请求的地址
-                        type: "post",  // 请求方式
-                        data: formData,
-                        // ajax发送文件必须要指定的两个参数
-                        contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
-                        processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
-                        async: true,  // 异步的ajax
-                    }).success(function (data) {
-                        if (data.res === 1) {
-                            layer.msg('提交成功，正在检测...', {icon: 1});
-                            {#$("#sol_bin").val(data.opcode)#}
-                        } else if (data.res === 0) {
-                            // 请求失败，显示错误信息
-                            layer.msg('提交失败', {icon: 2});
-                        }
-                    })
+                    layer.msg('提交成功，正在检测...', {icon: 1});
+                    eth_add_check(formData)
                 } else {
                     layer.msg('输入为空', {icon: 2});
                 }
-
-            })
+            });
+            // Ether Submit
+            $(document).keydown(function (event) {
+                if (event.keyCode == 13) {
+                    $("#submit_add").click();
+                }
+            });
         });
     </script>
 {% endblock %}

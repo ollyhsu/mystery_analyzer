@@ -28,6 +28,7 @@ def install_solc_version_select(solc_version):
         if solc_version is not None:
             subprocess.check_call(["solc-select", "use", solc_version])
         else:
+            subprocess.check_call(["solc-select", "install", "0.8.13"])
             subprocess.check_call(["solc-select", "use", "0.8.13"])
     except Exception:
         print("Solc v" + solc_version + " installing...")

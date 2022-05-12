@@ -4,6 +4,7 @@ import os
 import subprocess
 import time
 
+import solcx
 from django.contrib.auth.decorators import login_required
 
 from django.http import HttpResponse, JsonResponse
@@ -58,6 +59,8 @@ def start_vul_scan(request):
     obj = SolAddList.objects.get(id=vulid_get)
     try:
         sql_path = obj.fpath
+        abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
+        obj.runtime = get_bin_file(abs_path)
         result, check_time = run_file_check(sql_path)
         get_report_json(result, obj.id)
         obj.result = result
@@ -119,6 +122,8 @@ def run_myth_check(file_path, timeout):
     # Mythril 不支持自动检测合约版本，需要手动指定合约版本
     # 从sol文件中获取合约版本
     ver = get_sol_version(file_path)
+    if ver is None:
+        ver = '0.8.13'
     # 系统执行命令
     cmd_prefix = f"myth analyze {file_path}"
     myth_out = get_run_command(f"{cmd_prefix} --solv {ver} -o json", timeout)
@@ -130,14 +135,12 @@ def run_slither_check_file(file_path, timeout):
     # 从sol文件中获取合约版本
     ver = get_sol_version(file_path)
     if ver is None:
-        slither_out = '''{"success": false, "error": "Cannot Find Sol version", "results": {}}'''
-        return slither_out
-    else:
-        install_solc_version_select(ver)
-        # 系统执行命令
-        cmd_prefix = f"slither {file_path}"
-        slither_out = get_run_command(f"{cmd_prefix} --json -", timeout)
-        return slither_out
+        ver = '0.8.13'
+    install_solc_version_select(ver)
+    # 系统执行命令
+    cmd_prefix = f"slither {file_path}"
+    slither_out = get_run_command(f"{cmd_prefix} --json -", timeout)
+    return slither_out
 
 
 def get_run_command(cmd, timeout):
@@ -159,3 +162,29 @@ def get_run_command(cmd, timeout):
         logging.warning(
             f"[execute_command]error occurs when running `{cmd}`, output: {e}")
         return False
+
+
+def get_bin_file(abs_path):
+    try:
+        solc_ver = get_sol_version(abs_path)
+        if solc_ver is None:
+            solc_ver = '0.8.13'
+        if solcx.set_solc_version(solc_ver) is None:
+            solcx.install_solc(solc_ver)
+            print("Solc v" + solc_ver + " installed.")
+        try:
+            out = solcx.compile_files(
+                [abs_path],
+                output_values=["bin-runtime"],
+                solc_version=solc_ver
+            )
+            for key, value in out.items():
+                if len(value['bin-runtime']) > 0 and value['bin-runtime'][:8] == '60806040':
+                    # print(value['bin-runtime'])
+                    return value['bin-runtime']
+                else:
+                    return None
+        except Exception as e:
+            print(e)
+    except Exception as e:
+        print(e)

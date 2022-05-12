@@ -195,19 +195,20 @@
                 <label for="text">
                     <textarea id="codeTextarea" name="" cols="120" rows="15"></textarea>
                 </label>
-                <hr>
-                <h3 class="card-title">Runtime ByteCode</h3>
-                <label for="text">
-                    <textarea id="codeTextarea" name="" cols="120" rows="5"></textarea>
-                </label>
-                <hr>
-                <h3 class="card-title">Opcode</h3>
-                <label for="text">
-                    <textarea id="codeTextarea" name="" cols="120" rows="10"></textarea>
-                </label>
+                {% if data.runtime != '' %}
+                    <hr>
+                    <h3 class="card-title">Runtime ByteCode</h3>
+                    <label for="text">
+                        <textarea id="codeTextarea" name="" cols="120" rows="8" readonly>{{ data.runtime }}</textarea>
+                    </label>
+                    <hr>
+                    <h3 class="card-title">Opcode</h3>
+                    <label for="text">
+                        <textarea id="codeTextarea" name="" cols="120" rows="12" readonly>{{ data.opcodes }}</textarea>
+                    </label>
+                {% endif %}
                 <hr>
                 <h3 class="card-title">CFG</h3>
-
                 <hr>
                 <div>
                     <a id="delete-btn" class="update-btn btn btn-pill" onclick="delete_report('{{ data.id }}')">

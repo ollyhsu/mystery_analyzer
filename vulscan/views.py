@@ -52,6 +52,45 @@ def sol_upload_handle(request):
         return JsonResponse({"res": 0})
 
 
+@login_required
+def start_vul_scan(request):
+    vulid_get = request.POST.get("vulid")
+    obj = SolAddList.objects.get(id=vulid_get)
+    try:
+        sql_path = obj.fpath
+        result, check_time = run_file_check(sql_path)
+        get_report_json(result, obj.id)
+        obj.result = result
+        obj.status = "completed"
+        obj.check_time = check_time
+        obj.save()
+        print("Save Done...")
+        return JsonResponse({"res": 1})
+    except Exception as e:
+        return JsonResponse({"res": 0})
+
+
+@login_required
+def ether_add_handle(request):
+    try:
+        stime = time.time()
+        ether_add = request.POST.get("ether_add")
+        if ether_add[:2] == '0x':
+            tname = "%s-%s.sol" % (ether_add, int(stime))
+            add_path = "%s/eth_add/%s" % (settings.MEDIA_ROOT, tname)
+            eth_add_parser(ether_add, add_path)
+            s_path = "eth_add/%s" % tname
+            # 【4】保存路径到数据库，此处只保存其相对上传目录的路径
+            SolAddList.objects.create(add=ether_add, fpath=s_path, scantype="add", time=int(stime),
+                                      uid=request.user.id, status="running")
+            obj = SolAddList.objects.get(fpath=s_path)
+            return JsonResponse({"res": 1, "id": obj.id})
+        else:
+            return JsonResponse({"res": 0})
+    except Exception as e:
+        return JsonResponse({"res": 0})
+
+
 def run_file_check(sql_path):
     obj = SolAddList.objects.get(fpath=sql_path)
     abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
@@ -120,41 +159,3 @@ def get_run_command(cmd, timeout):
         logging.warning(
             f"[execute_command]error occurs when running `{cmd}`, output: {e}")
         return False
-
-
-@login_required
-def start_vul_scan(request):
-    vulid_get = request.POST.get("vulid")
-    obj = SolAddList.objects.get(id=vulid_get)
-    try:
-        sql_path = obj.fpath
-        result, check_time = run_file_check(sql_path)
-        obj.result = result
-        obj.status = "completed"
-        obj.check_time = check_time
-        obj.save()
-        get_report_json(result, obj.id)
-        return JsonResponse({"res": 1})
-    except Exception as e:
-        return JsonResponse({"res": 0})
-
-
-@login_required
-def ether_add_handle(request):
-    try:
-        stime = time.time()
-        ether_add = request.POST.get("ether_add")
-        if ether_add[:2] == '0x':
-            tname = "%s-%s.sol" % (ether_add, int(stime))
-            add_path = "%s/eth_add/%s" % (settings.MEDIA_ROOT, tname)
-            eth_add_parser(ether_add, add_path)
-            s_path = "eth_add/%s" % tname
-            # 【4】保存路径到数据库，此处只保存其相对上传目录的路径
-            SolAddList.objects.create(add=ether_add, fpath=s_path, scantype="add", time=int(stime),
-                                      uid=request.user.id, status="running")
-            obj = SolAddList.objects.get(fpath=s_path)
-            return JsonResponse({"res": 1, "id": obj.id})
-        else:
-            return JsonResponse({"res": 0})
-    except Exception as e:
-        return JsonResponse({"res": 0})

@@ -79,7 +79,27 @@ def get_report(request):
     except SolAddList.DoesNotExist:
         return HttpResponse('当前报告不存在')
 
+
 @login_required
+def del_report(request):
+    rid_get = request.POST.get('rid')
+    uid = request.user.id
+    try:
+        dreport_datas = VulDeatilList.objects.filter(rid=rid_get)
+        for deatillistware in dreport_datas:
+            deatillistware.delete()
+        obj = SolAddList.objects.get(id=rid_get)
+        file_path = os.path.join(settings.MEDIA_ROOT, obj.fpath)
+        # print(file_path)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        obj.delete()
+        return JsonResponse({"res": 1})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"res": 0})
+
+
 def get_report_json(data, rid):
     try:
         # # 转成字典格式
@@ -133,24 +153,3 @@ def get_report_json(data, rid):
         # return True
     except Exception as e:
         print(e)
-
-
-@login_required
-def del_report(request):
-    rid_get = request.POST.get('rid')
-    uid = request.user.id
-    try:
-        dreport_datas = VulDeatilList.objects.filter(rid=rid_get)
-        for deatillistware in dreport_datas:
-            deatillistware.delete()
-        obj = SolAddList.objects.get(id=rid_get)
-        file_path = os.path.join(settings.MEDIA_ROOT, obj.fpath)
-        # print(file_path)
-        if os.path.exists(file_path):
-            os.remove(file_path)
-        obj.delete()
-        return JsonResponse({"res": 1})
-    except Exception as e:
-        print(e)
-        return JsonResponse({"res": 0})
-

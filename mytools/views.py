@@ -6,12 +6,9 @@ from pyevmasm import disassemble_hex, assemble_hex
 
 from mystery_analyzer.settings import MEDIA_ROOT
 from .models import EtherVerified
-import json
-import logging
 import os
 import sys
 import time
-from sys import stdin
 
 import requests
 from bs4 import BeautifulSoup
@@ -74,12 +71,6 @@ def update_list_ajax(request):
 
 
 def insert_ether_data(add, name, compiler, version, verified_time, url):
-    # add = request.POST.get("username")
-    # name = request.POST.get("username")
-    # compiler = request.POST.get("username", None)
-    # version = request.POST.get("username", None)
-    # verified_time = request.POST.get("username", None)
-    # url = request.POST.get("username", None)
     try:
 
         EtherVerified.objects.create(  # 数据库插入语句

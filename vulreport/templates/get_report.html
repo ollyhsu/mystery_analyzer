@@ -31,10 +31,12 @@
     <link rel="stylesheet" href="{% static 'plugins/bootstrap-table/bootstrap-table.min.css' %}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
     <style type="text/css">
-        {##codeTextarea {#}
-        {#    width: 500px;#}
-        {#    height: 310px;#}
-
+        textarea {
+            background-color: #efefef;
+            border: none;
+            padding: 5px;
+            color: #666;
+        }
 
         .textAreaWithLines {
             font-family: courier;
@@ -193,18 +195,20 @@
                 <hr>
                 <h3 class="card-title">Sol Code</h3>
                 <label for="text">
-                    <textarea id="codeTextarea" name="" cols="120" rows="15" readonly>{{ data.sol_code }}</textarea>
+                    <textarea id="sol_code" name="sol_code" cols="120" rows="20" readonly>{{ data.sol_code }}</textarea>
                 </label>
                 {% if data.runtime != '' %}
                     <hr>
                     <h3 class="card-title">Runtime ByteCode</h3>
                     <label for="text">
-                        <textarea id="codeTextarea" name="" cols="120" rows="8" readonly>{{ data.runtime }}</textarea>
+                        <textarea id="runtime" name="runtime" cols="120" rows="8" readonly
+                                  style="width:97%">{{ data.runtime }}</textarea>
                     </label>
                     <hr>
                     <h3 class="card-title">Opcode</h3>
                     <label for="text">
-                        <textarea id="codeTextarea" name="" cols="120" rows="12" readonly>{{ data.opcodes }}</textarea>
+                        <textarea id="opcodes" name="opcodes" cols="120" rows="20"
+                                  readonly>{{ data.opcodes }}</textarea>
                     </label>
                 {% endif %}
                 <hr>
@@ -224,6 +228,7 @@
     <script src="{% static 'plugins/bootstrap-table/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'plugins/bootstrap-table/bootstrap-table-zh-CN.js' %}"></script>
     <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/auto-line-number.js' %}"></script>
     <!-- 消息弹层组件 依赖jquery -->
     <script src="{% static 'plugins/layer/layer.js' %}"></script>
     <!--按钮事件-->
@@ -258,7 +263,20 @@
 
 
         $(function () {
-
+            $("#sol_code").setTextareaCount({
+                    width: "30px",
+                    bgColor: "#e6e6e6",
+                    color: "#000",
+                    display: "block"
+                }
+            );
+            $("#opcodes").setTextareaCount({
+                    width: "30px",
+                    bgColor: "#e6e6e6",
+                    color: "#000",
+                    display: "block"
+                }
+            );
         });
     </script>
 

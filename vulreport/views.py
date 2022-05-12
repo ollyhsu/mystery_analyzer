@@ -1,17 +1,13 @@
 import json
 import os
-import shutil
 import time
 
-import demjson
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
-
 # Create your views here.
 from pyevmasm import disassemble_hex
 
-from mystery.utils.report.json_report import get_slither_report, get_mythril_report
 from mystery_analyzer import settings
 from vulreport.models import VulDeatilList
 from vulscan.models import SolAddList
@@ -47,14 +43,14 @@ def get_report(request):
         dcount = 0
         d_list = []
         obj = SolAddList.objects.get(id=rid_get)
-        # 若obj.runtime 不为空
+        # 若runtime
         if obj.runtime:
             bincode = obj.runtime
             if bincode[:10] == '0x60806040' or bincode[:8] == '60806040':
                 opcodes = disassemble_hex(bincode)
         else:
             opcodes = ''
-
+        sol_code = get_sol_code_file(obj.fpath)
         if obj.uid == uid:
             # dbj = VulDeatilList.objects.get(id=obj.id)
             report_data = {
@@ -70,6 +66,7 @@ def get_report(request):
                 'check_time': obj.check_time,
                 'runtime': obj.runtime,
                 'opcodes': opcodes,
+                'sol_code': sol_code,
             }
             dreport_datas = VulDeatilList.objects.filter(rid=rid_get)
             for deatillistware in dreport_datas:
@@ -163,3 +160,11 @@ def get_report_json(data, rid):
         # return True
     except Exception as e:
         print(e)
+
+
+def get_sol_code_file(fpath):
+    abs_path = "%s/%s" % (settings.MEDIA_ROOT, fpath)
+    # Read File Content from abs_path
+    with open(abs_path, 'r') as f:
+        content = f.read()
+    return content

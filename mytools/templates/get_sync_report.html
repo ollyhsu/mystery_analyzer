@@ -321,34 +321,6 @@
     <!--按钮事件-->
     <!--按钮事件-->
     <script>
-        function delete_report(i) {
-            {#console.log(i)#}
-            if (i) {
-                var formData = new FormData();
-                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
-                formData.append('csrfmiddlewaretoken', csrf);
-                formData.append('rid', i);
-                $.ajax({
-                    url: "/del_report/",  // 请求的地址
-                    type: "post",  // 请求方式
-                    data: formData,
-                    // ajax发送文件必须要指定的两个参数
-                    contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
-                    processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
-                    async: true,  // 异步的ajax
-                    success: function (data) {
-                        layer.msg('Delete Success', {icon: 1});
-                        setTimeout(function () {
-                            window.location.href = "/vulreport/";
-                        }, 5000)
-                    }
-                })
-            } else {
-                layer.msg('ID为空', {icon: 2});
-            }
-        }
-
-
         $(function () {
             $("#sol_code").setTextareaCount({
                     bgColor: "#e6e6e6",

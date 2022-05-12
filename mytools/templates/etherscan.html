@@ -47,7 +47,7 @@
                 </div>
                 <!--标题&介绍-->
                 <div class="d-flex flex-row justify-content-center" {#style="margin-top: 180px;"#}>
-                    <div class="p-2"><i class="fa fa-bug" style="zoom: 2.2;"></i></div>
+                    <div class="p-2"><i class="fa fa-sync" style="zoom: 2.2;"></i></div>
                     <div class="p-2"><h1> Etherscan Sync </h1></div>
                     <br>
                 </div>
@@ -70,25 +70,20 @@
                         <line x1="4" y1="9" x2="7.5" y2="12.5"/>
                     </svg>
                 </div>
-                {#                <span class="card-title text-center">#}
-                {#                    EtherScan列表#}
-                {#                </span>#}
                 {% if user.is_superuser == 1 %}
-
-                    <div>
-                        <a href="#" id="update-btn" class="update-btn btn btn-pill">
+                    <div class="btn-list justify-content-end">
+                        <a id="update-btn" class="update-btn btn btn-pill">
                             Update list
                         </a>
-                        <a href="#" id="save-btn" class="save-btn btn btn-pill">
+                        <a id="save-btn" class="save-btn btn btn-pill">
                             Save sol
                         </a>
-                        <a href="#" id="vul-btn" class="vul-btn btn btn-pill">
+                        <a id="vul-btn" class="vul-btn btn btn-pill">
                             Vul Detection
                         </a>
                     </div>
-
                 {% endif %}
-
+                <hr class="hr-text">
                 <!--结果表格-->
                 <div class="table-responsive" id="refresh">
                     <table class="table text-center" id="table"
@@ -117,6 +112,7 @@
                             <th data-sortable="true" data-field="version">Version</th>
                             <th data-sortable="true" data-field="verified_time">verified_time</th>
                             <th data-sortable="true" data-field="fpath">fpath</th>
+                            <th data-sortable="true" data-field="control">control</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -131,8 +127,6 @@
                                 <td>{{ i.compiler }}</td>
                                 <td>{{ i.version }}</td>
                                 <td>{{ i.verified_time }}</td>
-                                {#                                <td>{{ i.fpath }}</td>#}
-
                                 {% if not i.fpath %}
                                     <td>
                                         None
@@ -142,6 +136,22 @@
                                         Saved
                                     </td>
                                 {% endif %}
+
+                                <td>
+                                    <div class="p-2">
+                                        {% if user.is_superuser == 1 %}
+                                            <i class="fa fa-save" style="zoom: 2.2;padding:5px"
+                                               onclick="save_sol('{{ i.id }}')"></i>
+                                        {% endif %}
+                                        <i class="fa fa-search" style="zoom: 2.2;padding:5px"
+                                           onclick="view_sol('{{ i.id }}','{{ i.add }}')"></i>
+                                        {% if user.is_superuser == 1 %}
+                                            <i class="fa fa-times" style="zoom: 2.2;padding:5px"
+                                               onclick="del_sol('{{ i.id }}')"></i>
+                                        {% endif %}
+                                    </div>
+                                </td>
+
                             </tr>
                         {% endfor %}
                         </tbody>
@@ -156,12 +166,145 @@
     <!--Bootsrap Table-->
     <script src="{% static 'plugins/bootstrap-table/bootstrap-table.min.js' %}"></script>
     <script src="{% static 'plugins/bootstrap-table/bootstrap-table-zh-CN.js' %}"></script>
-
     <script src="{% static 'js/jquery.min.js' %}"></script>
     <!-- 消息弹层组件 依赖jquery -->
     <script src="{% static 'plugins/layer/layer.js' %}"></script>
     <!--按钮事件-->
     <script>
+
+        function eth_add_check(formData) {
+            $.ajax({
+                url: "/ether_add_ajax/",  // 请求的地址
+                type: "post",  // 请求方式
+                data: formData,
+                // ajax发送文件必须要指定的两个参数
+                contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                async: true,  // 异步的ajax
+            }).success(function (data) {
+                if (data.res === 1) {
+                    setTimeout(function () {
+                        console.log(data.id)
+                        formData.append('vulid', data.id);
+                        window.location.href = "/vulreport/";
+                        start_vul_scan(formData)
+                    }, 5000)
+                    {#$("#sol_bin").val(data.opcode)#}
+                } else if (data.res === 0) {
+                    // 请求失败，显示错误信息
+                    layer.msg('提交失败', {icon: 2});
+                }
+            })
+        }
+
+        function start_vul_scan(formData) {
+            $.ajax({
+                url: "/start_vul_scan/",  // 请求的地址
+                type: "post",  // 请求方式
+                data: formData,
+                // ajax发送文件必须要指定的两个参数
+                contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                async: true,  // 异步的ajax
+            });
+        };
+
+        function save_sol(s) {
+            console.log(s)
+            if (s) {
+                layer.msg('正在保存 ' + s, {icon: 1});
+                var formData = new FormData();
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                formData.append('csrfmiddlewaretoken', csrf);
+                formData.append('rid', s);
+                $.ajax({
+                    url: "/save_sync_each_file/",  // 请求的地址
+                    type: "post",  // 请求方式
+                    data: formData,
+                    // ajax发送文件必须要指定的两个参数
+                    contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                    processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                    async: true,  // 异步的ajax
+                }).success(function (data) {
+                    if (data.res === 1) {
+                        layer.msg('代码保存成功', {icon: 1});
+                        {#$("#sol_bin").val(data.opcode)#}
+                    } else if (data.res === 0) {
+                        // 请求失败，显示错误信息
+                        layer.msg('代码保存失败', {icon: 2});
+                    }
+                })
+            } else {
+                layer.msg('ID为空', {icon: 2});
+            }
+        };
+
+        function view_sol(s, add) {
+            {#console.log(s)#}
+            if (s) {
+                var formData = new FormData();
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                var ether_add = add;
+                formData.append('csrfmiddlewaretoken', csrf);
+                formData.append('rid', s);
+                formData.append('ether_add', ether_add);
+                $.ajax({
+                    url: "/check_sync_each_file/",  // 请求的地址
+                    type: "post",  // 请求方式
+                    data: formData,
+                    // ajax发送文件必须要指定的两个参数
+                    contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                    processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                    async: true,  // 异步的ajax
+                }).success(function (data) {
+                    if (data.res === 1) {
+                        {#setTimeout(function () {#}
+                        {#    console.log(data.id)#}
+                        {#    formData.append('vulid', data.id);#}
+                        {#    window.location.href = "/vulreport/";#}
+                        {#    start_vul_scan(formData)#}
+                        layer.msg('提交chengg', {icon: 2});
+                        {#$("#sol_bin").val(data.opcode)#}
+                    } else if (data.res === 0) {
+                        // 请求失败，显示错误信息
+                        layer.msg('提交失败', {icon: 2});
+                    }
+                })
+            } else {
+                layer.msg('ID为空', {icon: 2});
+            }
+        };
+
+        function del_sol(i) {
+            {#console.log(i)#}
+            if (i) {
+                {#layer.msg('正在删除 ' + i, {icon: 1});#}
+                var formData = new FormData();
+                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                formData.append('csrfmiddlewaretoken', csrf);
+                formData.append('rid', i);
+                $.ajax({
+                    url: "/del_sync_each_file/",  // 请求的地址
+                    type: "post",  // 请求方式
+                    data: formData,
+                    // ajax发送文件必须要指定的两个参数
+                    contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                    processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                    async: true,  // 异步的ajax
+                    success: function (data) {
+                        layer.msg('Delete Success', {icon: 1});
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 5000)
+
+                    }
+                })
+            } else {
+                layer.msg('ID为空', {icon: 2});
+            }
+        };
+
+
         $(function () {
             $(".update-btn").click(function () {
                 // 此参数需要传递给后端,否则会csrf禁止,报403错误
@@ -209,6 +352,8 @@
                     }
                 })
             });
+
+
         });
     </script>
 {% endblock %}

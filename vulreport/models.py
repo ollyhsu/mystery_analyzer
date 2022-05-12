@@ -13,8 +13,8 @@ class VulDeatilList(models.Model):
     impact = models.CharField(max_length=100, null=True)
     description = models.CharField(max_length=100, null=True)
     lines = models.CharField(max_length=100, null=True)
-    fname = models.CharField(max_length=100, null=True)
-    add = models.CharField(max_length=100, null=True)
-    fpath = models.CharField(max_length=100, null=True)
-    scantype = models.CharField(max_length=100, null=True)
+    # fname = models.CharField(max_length=100, null=True)
+    # add = models.CharField(max_length=100, null=True)
+    # fpath = models.CharField(max_length=100, null=True)
+    # scantype = models.CharField(max_length=100, null=True)
 

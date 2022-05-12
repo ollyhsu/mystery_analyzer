@@ -5,7 +5,7 @@ from django.shortcuts import render
 from pyevmasm import disassemble_hex, assemble_hex
 
 from mystery_analyzer.settings import MEDIA_ROOT
-from .models import EtherVerified
+from .models import EtherVerified, EtherDeatilList
 import os
 import sys
 import time
@@ -367,3 +367,61 @@ def eth_add_parser(eth_add, addpath):
         print("Parser Success.")
     except FileNotFoundError as e:
         print(e)
+
+
+# 按钮保存代码
+def save_sync_each_file(request):
+    rid_get = request.POST.get('rid')
+    # print(rid_get)
+    try:
+        obj = EtherVerified.objects.get(id=rid_get)
+        filename = obj.add + "-" + obj.name + ".sol"
+        save_path = "%s/etherscan/%s" % (MEDIA_ROOT, filename)
+        sql_fpath = 'etherscan/%s' % filename
+        if obj.fpath is None:
+            eth_add_parser(obj.add, save_path)
+            obj.fpath = sql_fpath
+            obj.save()
+        return JsonResponse({"res": 1})
+    except Exception as e:
+        print(e)
+        return HttpResponse('当前报告不存在')
+
+
+# 按钮删除etherscan报告
+def del_sync_each_file(request):
+    rid_get = request.POST.get('rid')
+    try:
+        dreport_datas = EtherDeatilList.objects.filter(rid=rid_get)
+        if len(dreport_datas) > 0:
+            for deatillistware in dreport_datas:
+                deatillistware.delete()
+        else:
+            print('没有数据')
+        obj = EtherVerified.objects.get(id=rid_get)
+        # 循环获取obj.cfg文件路径
+        if obj.cfg:
+            for i in json.loads(obj.cfg):
+                cfg_path = os.path.join(settings.MEDIA_ROOT, i)
+                # delete file
+                if os.path.exists(cfg_path):
+                    os.remove(cfg_path)
+        if obj.fpath:
+            file_path = os.path.join(settings.MEDIA_ROOT, obj.fpath)
+            if os.path.exists(file_path):
+                os.remove(file_path)
+        obj.delete()
+        print("Delete Done")
+        return JsonResponse({"res": 1})
+    except Exception as e:
+        print(e)
+        return JsonResponse({"res": 0})
+
+
+
+
+
+
+
+
+

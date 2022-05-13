@@ -12,7 +12,8 @@ def insert_ether_data(add, name, compiler, version, verified_time, url):
     try:
 
         EtherVerified.objects.create(  # 数据库插入语句
-            add=add, name=name, compiler=compiler, version=version, verified_time=verified_time, url=url
+            add=add, name=name, compiler=compiler, version=version, verified_time=verified_time, url=url,
+            status="running"
         )
         # print("insert success")
         return True

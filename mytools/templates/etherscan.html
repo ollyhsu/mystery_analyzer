@@ -143,8 +143,13 @@
                                             <i class="fa fa-save" style="zoom: 2.2;padding:5px"
                                                onclick="save_sol('{{ i.id }}')"></i>
                                         {% endif %}
-                                        <i class="fa fa-search" style="zoom: 2.2;padding:5px"
-                                           onclick="view_sol('{{ i.id }}')"></i>
+                                        {% if i.status == 'completed' %}
+                                            <i class="fa fa-search" style="zoom: 2.2;padding:5px"
+                                               onclick="vuleth_detail('{{ i.id }}')"></i>
+                                        {% else %}
+                                            <i class="fa fa-check" style="zoom: 2.2;padding:5px"
+                                               onclick="submit_sol('{{ i.id }}','{{ i.fpath }}')"></i>
+                                        {% endif %}
                                         {% if user.is_superuser == 1 %}
                                             <i class="fa fa-times" style="zoom: 2.2;padding:5px"
                                                onclick="del_sol('{{ i.id }}')"></i>
@@ -171,43 +176,62 @@
     <script src="{% static 'plugins/layer/layer.js' %}"></script>
     <!--按钮事件-->
     <script>
-
-        function view_sol(s) {
-            {#console.log(s)#}
-            if (s) {
-                var formData = new FormData();
-                var csrf = $('input[name="csrfmiddlewaretoken"]').val();
-                formData.append('csrfmiddlewaretoken', csrf);
-                formData.append('rid', s);
+        function vuleth_detail(i) {
+            {#console.log(i)#}
+            if (i) {
                 $.ajax({
-                    url: "/check_sync_each_file/",  // 请求的地址
-                    type: "post",  // 请求方式
-                    data: formData,
-                    // ajax发送文件必须要指定的两个参数
-                    contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
                     processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
                     async: true,  // 异步的ajax
-                }).success(function (data) {
-                    if (data.res === 1) {
-                        {#setTimeout(function () {#}
-                        {#    console.log(data.id)#}
-                        {#    formData.append('vulid', data.id);#}
-                        {#    window.location.href = "/vulreport/";#}
-                        {#    start_vul_scan(formData)#}
-                        layer.msg('提交chengg', {icon: 2});
-                        {#$("#sol_bin").val(data.opcode)#}
-                    } else if (data.res === 0) {
-                        // 请求失败，显示错误信息
-                        layer.msg('提交失败', {icon: 2});
-                    }
+                    success: function () {
+                        window.location.replace("{% url 'get_sync_report' %}?rid=" + i);   //可以带点参数
+                    },
                 })
             } else {
                 layer.msg('ID为空', {icon: 2});
             }
-        };
+        }
+
+        function submit_sol(s, f) {
+            {#console.log(f);#}
+            if (f != 'None') {
+                layer.msg('提交成功', {icon: 1});
+                if (s) {
+                    var formData = new FormData();
+                    var csrf = $('input[name="csrfmiddlewaretoken"]').val();
+                    formData.append('csrfmiddlewaretoken', csrf);
+                    formData.append('rid', s);
+                    $.ajax({
+                        url: "/check_sync_each_file/",  // 请求的地址
+                        type: "post",  // 请求方式
+                        data: formData,
+                        // ajax发送文件必须要指定的两个参数
+                        contentType: false,  // 不需使用任何编码 django后端能够自动识别formdata对象
+                        processData: false,  // 告诉你的浏览器不要对你的数据进行任何处理
+                        async: true,  // 异步的ajax
+                    }).success(function (data) {
+                        if (data.res === 1) {
+                            {#setTimeout(function () {#}
+                            {#    console.log(data.id)#}
+                            {#    formData.append('vulid', data.id);#}
+                            {#    window.location.href = "/vulreport/";#}
+                            {#    start_vul_scan(formData)#}
+                            layer.msg('检测成功', {icon: 1});
+                            {#$("#sol_bin").val(data.opcode)#}
+                        } else if (data.res === 0) {
+                            // 请求失败，显示错误信息
+                            layer.msg('提交失败', {icon: 2});
+                        }
+                    })
+                } else {
+                    layer.msg('ID为空', {icon: 2});
+                }
+            } else {
+                layer.msg('请先保存代码', {icon: 1});
+            }
+        }
 
         function save_sol(s) {
-            console.log(s)
+            {#console.log(s)#}
             if (s) {
                 layer.msg('正在保存 ' + s, {icon: 1});
                 var formData = new FormData();
@@ -225,6 +249,10 @@
                 }).success(function (data) {
                     if (data.res === 1) {
                         layer.msg('代码保存成功', {icon: 1});
+                        {#refresh after 3s#}
+                        setTimeout(function () {
+                            window.location.reload();
+                        }, 5000);
                         {#$("#sol_bin").val(data.opcode)#}
                     } else if (data.res === 0) {
                         // 请求失败，显示错误信息
@@ -234,7 +262,7 @@
             } else {
                 layer.msg('ID为空', {icon: 2});
             }
-        };
+        }
 
         function del_sol(i) {
             {#console.log(i)#}
@@ -263,7 +291,8 @@
             } else {
                 layer.msg('ID为空', {icon: 2});
             }
-        };
+        }
+
         $(function () {
             $(".update-btn").click(function () {
                 // 此参数需要传递给后端,否则会csrf禁止,报403错误

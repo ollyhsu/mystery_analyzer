@@ -133,8 +133,25 @@ def check_sync_each_file(request):
     # obj.cfg = get_cfg_png_list(abs_path)
     # 运行检测
     result, check_time = run_file_check(abs_path, eth_ver=version)
-    obj.result, obj.check_time = result, check_time
+
+    if len(result) > 65535:
+        filename, extensionname = os.path.splitext(obj.fpath)
+        json_file = f"{filename}_result.json"
+        report_file = os.path.join(MEDIA_ROOT, json_file)
+        # if report_file exist delete
+        if os.path.exists(report_file):
+            os.remove(report_file)
+        # save result
+        with open(report_file, "w") as f:
+            f.write(result)
+            f.flush()
+            os.fsync(f.fileno())
+        obj.result = json_file
+    else:
+        obj.result = result
+
+    obj.check_time = check_time
     obj.status = "completed"
     obj.save()
-    print("Save Done...")
+    print("ETH Save Done...")
     return JsonResponse({"res": 1})

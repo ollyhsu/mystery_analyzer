@@ -66,9 +66,24 @@ def start_vul_scan(request):
         # obj.cfg = get_cfg_png_list(abs_path)
         # 运行检测
         result, check_time = run_file_check(abs_path)
+        if len(result) > 65535:
+            filename, extensionname = os.path.splitext(obj.fpath)
+            json_file = f"{filename}_result.json"
+            report_file = os.path.join(MEDIA_ROOT, json_file)
+            # if report_file exist delete
+            if os.path.exists(report_file):
+                os.remove(report_file)
+            # save result
+            with open(report_file, "w") as f:
+                f.write(result)
+                f.flush()
+                os.fsync(f.fileno())
+            obj.result = json_file
+        else:
+            obj.result = result
         # 结果保存详细列表
         get_report_json(result, obj.id)
-        obj.result, obj.check_time = result, check_time
+        obj.check_time = check_time
         obj.status = "completed"
         obj.save()
         print("Save Done...")
@@ -106,7 +121,7 @@ def run_file_check(abs_path, **kwargs):
         for key, value in kwargs.items():
             if key == 'eth_ver':
                 solcv_check_kwargs = value
-        print(solcv_check_kwargs)
+        # print(solcv_check_kwargs)
     else:
         print("run_file_check not kwargs")
     # obj = SolAddList.objects.get(fpath=sql_path)
@@ -114,10 +129,13 @@ def run_file_check(abs_path, **kwargs):
     print("Checking...")
     start = time.perf_counter()
     slither_out = run_slither_check_file(abs_path, 90, solcv_check_kwargs)
-    # print(slither_out)
     print("Slither Done...")
     myth_out = run_myth_check(abs_path, 90, solcv_check_kwargs)
     print("Mthril Done...")
+    if slither_out == "timeout":
+        slither_out = '''{"success": false, "error": "Error: slither execution timed out", "results": {}}'''
+    if myth_out == "timeout":
+        myth_out = '''{"success": false, "error": "Error: mythril execution timed out", "issues": []}'''
     end = time.perf_counter()
     check_time = "%.2f" % (end - start)
     # 将myth_out和slither_out嵌套到一个json中
@@ -125,7 +143,8 @@ def run_file_check(abs_path, **kwargs):
     mdict = json.loads(myth_out)
     result_dict = [{"Mythril": mdict}, {"Slither": sdict}]
     result_json = json.dumps(result_dict)
-    print("Done...")
+    print("Check Done...")
+    # print(len(result_json))
     return result_json, check_time
 
 
@@ -180,10 +199,10 @@ def get_run_command(cmd, timeout):
     """
     Run a command and return the output.
     """
+    logging.debug(f"execute cmd: {cmd}")
+    p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
+                         stdin=subprocess.PIPE)
     try:
-        logging.debug(f"execute cmd: {cmd}")
-        p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
-                             stdin=subprocess.PIPE)
         stdout, stderr = p.communicate(timeout=timeout)
         # print(stdout)
         out = stdout.decode('utf-8')
@@ -191,11 +210,12 @@ def get_run_command(cmd, timeout):
     except subprocess.TimeoutExpired as e:
         logging.warning(
             f"[execute_command]timeout occurs when running `{cmd}`, timeout: {timeout}s")
-        return False
+        p.kill()
+        return "timeout"
     except Exception as e:
         logging.warning(
             f"[execute_command]error occurs when running `{cmd}`, output: {e}")
-        return False
+        return "failed"
 
 
 def get_bin_file(abs_path, **kwargs):

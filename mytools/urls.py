@@ -12,6 +12,6 @@ urlpatterns = [
     # path('get_sync_report/', views.get_sync_report, name='get_sync_report'),
     path('save_sync_each_file/', views.save_sync_each_file, name='save_sync_each_file'),
     path('del_sync_each_file/', views.del_sync_each_file, name='del_sync_each_file'),
-    # path('check_sync_each_file/', views.check_sync_each_file, name='check_sync_each_file'),
+    path('check_sync_each_file/', views.check_sync_each_file, name='check_sync_each_file'),
 
 ]

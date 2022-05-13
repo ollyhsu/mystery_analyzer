@@ -53,6 +53,11 @@ def get_report(request):
             opcodes = ''
         sol_code = get_sol_code_file(obj.fpath)
 
+        if obj.cfg:
+            cfg_path = json.loads(obj.cfg)
+        else:
+            cfg_path = ''
+
         if obj.uid == uid:
             report_data = {
                 'id': obj.id,
@@ -68,7 +73,7 @@ def get_report(request):
                 'runtime': obj.runtime,
                 'opcodes': opcodes,
                 'sol_code': sol_code,
-                'cfg': json.loads(obj.cfg),
+                'cfg': cfg_path,
             }
             dreport_datas = VulDeatilList.objects.filter(rid=rid_get)
             for deatillistware in dreport_datas:

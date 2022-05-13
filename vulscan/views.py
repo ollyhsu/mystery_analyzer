@@ -11,7 +11,8 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from mystery.solidity import get_sol_version, install_solc_version_select
-from mytools.views import eth_add_parser
+from mytools.platform.ethget import eth_add_parser
+
 from vulreport.views import get_report_json
 from vulscan.models import SolAddList
 
@@ -58,14 +59,13 @@ def start_vul_scan(request):
     vulid_get = request.POST.get("vulid")
     obj = SolAddList.objects.get(id=vulid_get)
     try:
-        sql_path = obj.fpath
         abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
         # 获取Runtime
         obj.runtime = get_bin_file(abs_path)
         # 返回CFG PNG List
-        obj.cfg = get_cfg_png_list(abs_path)
+        # obj.cfg = get_cfg_png_list(abs_path)
         # 运行检测
-        result, check_time = run_file_check(sql_path)
+        result, check_time = run_file_check(abs_path)
         # 结果保存详细列表
         get_report_json(result, obj.id)
         obj.result, obj.check_time = result, check_time
@@ -98,15 +98,18 @@ def ether_add_handle(request):
         return JsonResponse({"res": 0})
 
 
-def run_file_check(sql_path):
-    obj = SolAddList.objects.get(fpath=sql_path)
-    abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
+# Done
+
+def run_file_check(abs_path):
+    # obj = SolAddList.objects.get(fpath=sql_path)
+    # abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
+    global solc_ver
     print("Checking...")
     start = time.perf_counter()
-    slither_out = run_slither_check_file(abs_path, 60)
+    slither_out = run_slither_check_file(abs_path, 90)
     # print(slither_out)
     print("Slither Done...")
-    myth_out = run_myth_check(abs_path, 60)
+    myth_out = run_myth_check(abs_path, 90)
     print("Mthril Done...")
     end = time.perf_counter()
     check_time = "%.2f" % (end - start)
@@ -125,18 +128,20 @@ def run_myth_check(file_path, timeout):
     """
     # Mythril 不支持自动检测合约版本，需要手动指定合约版本
     # 从sol文件中获取合约版本
-    ver = get_sol_version(file_path)
-    if ver is None:
-        ver = '0.8.13'
+    solc_ver = get_sol_version(file_path)
+    if solc_ver is None:
+        solc_ver = '0.8.13'
+    set_solcx_ver_install(solc_ver)
     # 系统执行命令
     cmd_prefix = f"myth analyze {file_path}"
-    myth_out = get_run_command(f"{cmd_prefix} --solv {ver} -o json", timeout)
+    myth_out = get_run_command(f"{cmd_prefix} --solv {solc_ver} -o json", timeout)
     return myth_out
 
 
 def run_slither_check_file(file_path, timeout):
     # 使用Slither分析智能合约源代码
     # 从sol文件中获取合约版本
+
     ver = get_sol_version(file_path)
     if ver is None:
         ver = '0.8.13'
@@ -170,13 +175,13 @@ def get_run_command(cmd, timeout):
 
 
 def get_bin_file(abs_path):
+    global solc_ver
     try:
+
         solc_ver = get_sol_version(abs_path)
         if solc_ver is None:
             solc_ver = '0.8.13'
-        if solcx.set_solc_version(solc_ver) is None:
-            solcx.install_solc(solc_ver)
-            print("Solc v" + solc_ver + " installed.")
+        set_solcx_ver_install(solc_ver)
         try:
             out = solcx.compile_files(
                 [abs_path],
@@ -229,3 +234,16 @@ def cfg_dot_to_png(dot_path):
     # 分割png_fpath 保留相对路径
     png_fpath = png_fpath.split('media/')[-1]
     return png_fpath
+
+
+def set_solcx_ver_install(ver):
+    install_list = []
+    ver_list = solcx.get_installable_solc_versions()
+    for i in ver_list:
+        install_list.append(str(i))
+    if ver not in install_list:
+        print("None")
+        solcx.install_solc(ver)
+        solcx.set_solc_version(ver)
+    else:
+        solcx.set_solc_version(ver)

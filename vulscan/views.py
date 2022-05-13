@@ -113,7 +113,7 @@ def run_file_check(abs_path, **kwargs):
     # abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
     print("Checking...")
     start = time.perf_counter()
-    slither_out = run_slither_check_file(abs_path, 90)
+    slither_out = run_slither_check_file(abs_path, 90, solcv_check_kwargs)
     # print(slither_out)
     print("Slither Done...")
     myth_out = run_myth_check(abs_path, 90, solcv_check_kwargs)
@@ -154,14 +154,22 @@ def run_myth_check(file_path, timeout, solcv_kwargs):
     return myth_out
 
 
-def run_slither_check_file(file_path, timeout):
+def run_slither_check_file(file_path, timeout, solcvs_kwargs):
     # 使用Slither分析智能合约源代码
     # 从sol文件中获取合约版本
-
-    ver = get_sol_version(file_path)
-    if ver is None:
-        ver = '0.8.13'
-    install_solc_version_select(ver)
+    if solcvs_kwargs:
+        print("slither has kwargs")
+        solc_ver_sli = solcvs_kwargs
+    else:
+        print("slither not kwargs")
+        solc_ver_bin = get_sol_version(file_path)
+        # print(solc_ver_bin)
+        if solc_ver_bin is None:
+            solc_ver_sli = '0.8.13'
+        else:
+            solc_ver_sli = solc_ver_bin
+    # set_solcx_ver_install(solc_ver_sli)
+    install_solc_version_select(solc_ver_sli)
     # 系统执行命令
     cmd_prefix = f"slither {file_path}"
     slither_out = get_run_command(f"{cmd_prefix} --json -", timeout)

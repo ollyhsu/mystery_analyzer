@@ -103,7 +103,6 @@ def ether_add_handle(request):
 def run_file_check(abs_path):
     # obj = SolAddList.objects.get(fpath=sql_path)
     # abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
-    global solc_ver
     print("Checking...")
     start = time.perf_counter()
     slither_out = run_slither_check_file(abs_path, 90)
@@ -175,7 +174,6 @@ def get_run_command(cmd, timeout):
 
 
 def get_bin_file(abs_path):
-    global solc_ver
     try:
 
         solc_ver = get_sol_version(abs_path)

@@ -204,10 +204,16 @@ def get_run_command(cmd, timeout):
     p = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE,
                          stdin=subprocess.PIPE)
     try:
-        stdout, stderr = p.communicate(timeout=timeout)
+        if p.poll() is not None:
+            print(p.poll())
+            print("the popen not run, restart this:%s" % cmd)
+            # pipe = sp.Popen(command, stdin=sp.PIPE, env=my_env)
+            time.sleep(10)
         # print(stdout)
+        stdout, stderr = p.communicate(timeout=timeout)
         out = stdout.decode('utf-8')
         return out
+
     except subprocess.TimeoutExpired as e:
         logging.warning(
             f"[execute_command]timeout occurs when running `{cmd}`, timeout: {timeout}s")

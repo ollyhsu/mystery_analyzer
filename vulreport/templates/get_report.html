@@ -220,7 +220,7 @@
                         <textarea id="sol_code" class="form-control" rows="20" readonly>{{ data.sol_code }}</textarea>
                     </div>
                 </div>
-                {% if data.runtime != '' %}
+                {% if data.runtime != None %}
                     <hr>
                     <h3 class="card-title">Runtime ByteCode</h3>
                     <div class="col-lg-12">
@@ -260,7 +260,7 @@
                     </svg>
                 </div>
                 <!--结果表格-->
-                {% if data.cfg != '' %}
+                {% if data.cfg != None %}
                     <h3 class="card-title">Control Flow Graph</h3>
                     <div id="carousel-sample" class="carousel slide" data-bs-ride="carousel">
                         <div class="carousel-indicators">

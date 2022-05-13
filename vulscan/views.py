@@ -173,18 +173,29 @@ def get_run_command(cmd, timeout):
         return False
 
 
-def get_bin_file(abs_path):
+def get_bin_file(abs_path, **kwargs):
+    # print(abs_path, kwargs)
+    solc_ver_runtime = ''
     try:
-
-        solc_ver = get_sol_version(abs_path)
-        if solc_ver is None:
-            solc_ver = '0.8.13'
-        set_solcx_ver_install(solc_ver)
+        if kwargs:
+            print("get_bin has kwargs")
+            for key, value in kwargs.items():
+                if key == 'eth_ver':
+                    solc_ver_runtime = value
+        else:
+            print("get_bin not kwargs")
+            solc_ver_bin = get_sol_version(abs_path)
+            # print(solc_ver_bin)
+            if solc_ver_bin is None:
+                solc_ver_runtime = '0.8.13'
+            else:
+                solc_ver_runtime = solc_ver_bin
+        set_solcx_ver_install(solc_ver_runtime)
         try:
             out = solcx.compile_files(
                 [abs_path],
                 output_values=["bin-runtime"],
-                solc_version=solc_ver
+                solc_version=solc_ver_runtime
             )
             for key, value in out.items():
                 if len(value['bin-runtime']) > 0 and value['bin-runtime'][:8] == '60806040':
@@ -240,8 +251,14 @@ def set_solcx_ver_install(ver):
     for i in ver_list:
         install_list.append(str(i))
     if ver not in install_list:
-        print("None")
-        solcx.install_solc(ver)
-        solcx.set_solc_version(ver)
+        try:
+            solcx.set_solc_version(ver)
+        except solcx.exceptions.SolcNotInstalled:
+            solcx.install_solc(ver)
+            solcx.set_solc_version(ver)
     else:
-        solcx.set_solc_version(ver)
+        try:
+            solcx.set_solc_version(ver)
+        except solcx.exceptions.SolcNotInstalled:
+            solcx.install_solc(ver)
+            solcx.set_solc_version(ver)

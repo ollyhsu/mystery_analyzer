@@ -128,7 +128,7 @@ def check_sync_each_file(request):
     version = obj.version
     # print(abs_path)
     # 获取Runtime
-    obj.runtime = get_bin_file(abs_path)
+    obj.runtime = get_bin_file(abs_path, eth_ver=version)
     # 返回CFG PNG List
     # obj.cfg = get_cfg_png_list(abs_path)
     # 运行检测

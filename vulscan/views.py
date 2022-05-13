@@ -100,7 +100,15 @@ def ether_add_handle(request):
 
 # Done
 
-def run_file_check(abs_path):
+def run_file_check(abs_path, **kwargs):
+    solcv_check_kwargs = ''
+    if kwargs:
+        for key, value in kwargs.items():
+            if key == 'eth_ver':
+                solcv_check_kwargs = value
+        print(solcv_check_kwargs)
+    else:
+        print("run_file_check not kwargs")
     # obj = SolAddList.objects.get(fpath=sql_path)
     # abs_path = "%s/%s" % (settings.MEDIA_ROOT, obj.fpath)
     print("Checking...")
@@ -108,7 +116,7 @@ def run_file_check(abs_path):
     slither_out = run_slither_check_file(abs_path, 90)
     # print(slither_out)
     print("Slither Done...")
-    myth_out = run_myth_check(abs_path, 90)
+    myth_out = run_myth_check(abs_path, 90, solcv_check_kwargs)
     print("Mthril Done...")
     end = time.perf_counter()
     check_time = "%.2f" % (end - start)
@@ -121,19 +129,28 @@ def run_file_check(abs_path):
     return result_json, check_time
 
 
-def run_myth_check(file_path, timeout):
+def run_myth_check(file_path, timeout, solcv_kwargs):
     """
     Run the myth analysis tool on the input file.
     """
     # Mythril 不支持自动检测合约版本，需要手动指定合约版本
     # 从sol文件中获取合约版本
-    solc_ver = get_sol_version(file_path)
-    if solc_ver is None:
-        solc_ver = '0.8.13'
-    set_solcx_ver_install(solc_ver)
+    # print(solcv_kwargs)
+    if solcv_kwargs:
+        print("myth has kwargs")
+        solc_ver_myth = solcv_kwargs
+    else:
+        print("myth not kwargs")
+        solc_ver_bin = get_sol_version(file_path)
+        # print(solc_ver_bin)
+        if solc_ver_bin is None:
+            solc_ver_myth = '0.8.13'
+        else:
+            solc_ver_myth = solc_ver_bin
+    set_solcx_ver_install(solc_ver_myth)
     # 系统执行命令
     cmd_prefix = f"myth analyze {file_path}"
-    myth_out = get_run_command(f"{cmd_prefix} --solv {solc_ver} -o json", timeout)
+    myth_out = get_run_command(f"{cmd_prefix} --solv {solc_ver_myth} -o json", timeout)
     return myth_out
 
 

@@ -132,7 +132,7 @@ def check_sync_each_file(request):
     # 返回CFG PNG List
     # obj.cfg = get_cfg_png_list(abs_path)
     # 运行检测
-    result, check_time = run_file_check(abs_path)
+    result, check_time = run_file_check(abs_path, eth_ver=version)
     obj.result, obj.check_time = result, check_time
     obj.status = "completed"
     obj.save()

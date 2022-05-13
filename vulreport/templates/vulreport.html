@@ -125,7 +125,7 @@
                                     {#                                <td>{{ i.scantype }}</td>#}
                                     <td>{{ i.time }}</td>
 
-                                    {% if not i.result %}
+                                    {% if i.status == 'running' %}
                                         <td>
                                             <a class="btn bg-azure-lt btn-block">
                                                 <span class="spinner-border spinner-border-sm me-2"
@@ -133,7 +133,7 @@
                                                 Running
                                             </a>
                                         </td>
-                                    {% else %}
+                                    {% elif i.status == 'completed' %}
                                         <td>
                                             <a class="vul_detail btn bg-green-lt btn-block" id="vul_detail"
                                                onclick="vul_detail('{{ i.id }}')">

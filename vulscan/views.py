@@ -11,6 +11,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from mystery.solidity import get_sol_version, install_solc_version_select
+from mystery_analyzer.settings import MEDIA_ROOT
 from mytools.platform.ethget import eth_add_parser
 
 from vulreport.views import get_report_json
@@ -63,7 +64,7 @@ def start_vul_scan(request):
         # 获取Runtime
         obj.runtime = get_bin_file(abs_path)
         # 返回CFG PNG List
-        # obj.cfg = get_cfg_png_list(abs_path)
+        obj.cfg = get_cfg_png_list(abs_path)
         # 运行检测
         result, check_time = run_file_check(abs_path)
         if len(result) > 65535:
@@ -256,25 +257,32 @@ def get_bin_file(abs_path, **kwargs):
 
 def get_cfg_png_list(abs_path):
     timeout = 60
+    # print(abs_path)
     cmd_prefix = f"slither {abs_path}"
     res = subprocess.Popen(f"{cmd_prefix} --print cfg", shell=True, stdout=subprocess.PIPE,
                            stderr=subprocess.STDOUT)  # 使用管道
-    info_out = res.stdout.readlines()
-    # print("CFG Export")
-    str_list = [x.decode('utf-8') for x in info_out]
-    # 遍历str_list，提取dot文件名
-    cfg_png_list = []
-    for str_dot in str_list:
-        if str_dot.find("dot") != -1:
-            png_path = cfg_dot_to_png(str_dot.split(" ")[-1].strip())
-            cfg_png_list.append(png_path)
-            # 删除dot文件
-            if os.path.exists(str_dot.split(" ")[-1].strip()):
-                os.remove(str_dot.split(" ")[-1].strip())
-    cfg_png_json = json.dumps(cfg_png_list)
-    print("CFG Export Done")
-    # print(type(cfg_png_json))
-    return cfg_png_json
+    try:
+        info_out = res.stdout.readlines()
+        print("CFG Export")
+        str_list = [x.decode('utf-8') for x in info_out]
+        # 遍历str_list，提取dot文件名
+        cfg_png_list = []
+        for str_dot in str_list:
+            if str_dot.find("dot") != -1:
+                png_path = cfg_dot_to_png(str_dot.split(" ")[-1].strip())
+                cfg_png_list.append(png_path)
+                # 删除dot文件
+                if os.path.exists(str_dot.split(" ")[-1].strip()):
+                    os.remove(str_dot.split(" ")[-1].strip())
+        cfg_png_json = json.dumps(cfg_png_list)
+        # 刷新缓冲区
+        res.stdout.flush()
+        print("CFG Export Done")
+        # print(type(cfg_png_json))
+        return cfg_png_json
+    except Exception as e:
+        res.kill()
+        return False
 
 
 def cfg_dot_to_png(dot_path):

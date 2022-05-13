@@ -28,6 +28,7 @@ def vulreport(request):
             'result': replistware.result,
             'time': time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(float(replistware.time))),
             'uid': replistware.uid,
+            'status': replistware.status,
         }
         r_list.append(report_data)
         rcount += 1

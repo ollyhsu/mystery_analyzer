@@ -135,8 +135,12 @@ def run_file_check(abs_path, **kwargs):
     print("Mthril Done...")
     if slither_out == "timeout":
         slither_out = '''{"success": false, "error": "Error: slither execution timed out", "results": {}}'''
+    if slither_out == "failed":
+        slither_out = '''{"success": false, "error": "Error: slither check failed", "results": {}}'''
     if myth_out == "timeout":
         myth_out = '''{"success": false, "error": "Error: mythril execution timed out", "issues": []}'''
+    if myth_out == "failed":
+        myth_out = '''{"success": false, "error": "Error: mythril check failed", "issues": []}'''
     end = time.perf_counter()
     check_time = "%.2f" % (end - start)
     # 将myth_out和slither_out嵌套到一个json中

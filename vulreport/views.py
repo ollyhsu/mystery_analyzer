@@ -53,10 +53,13 @@ def get_report(request):
         else:
             opcodes = ''
         sol_code = get_sol_code_file(obj.fpath)
-
-        if obj.cfg:
-            cfg_path = json.loads(obj.cfg)
-        else:
+        try:
+            if obj.cfg:
+                cfg_path = json.loads(obj.cfg)
+            else:
+                cfg_path = ''
+        except Exception as e:
+            print(e)
             cfg_path = ''
 
         if obj.uid == uid:
